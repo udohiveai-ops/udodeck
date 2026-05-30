@@ -1,11 +1,11 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   UdoDeck — AI Slide Generator
+   Udara — AI Slide Generator
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── Dark mode — runs immediately (before DOMContentLoaded) so there's
       no flash of wrong theme on page load ──────────────────────────────── */
 (function applyThemeEarly(){
-  const saved = localStorage.getItem('UdoDeck_theme_mode');
+  const saved = localStorage.getItem('udara_theme_mode');
   // Also respect the OS-level dark mode preference if no saved choice
   const prefersDark = window.matchMedia &&
                       window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -17,7 +17,7 @@
 /* Toggle called from the header button */
 function toggleDarkMode(){
   const isDark = document.documentElement.classList.toggle('dark');
-  localStorage.setItem('UdoDeck_theme_mode', isDark ? 'dark' : 'light');
+  localStorage.setItem('udara_theme_mode', isDark ? 'dark' : 'light');
   updateThemeToggleLabel(isDark);
 }
 
@@ -28,12 +28,12 @@ function updateThemeToggleLabel(isDark){
 
 /* ── Storage keys ─────────────────────────────────────────────────────── */
 const LS = {
-  slides:'UdoDeck_slides_v1', topic:'UdoDeck_topic_v1', audience:'UdoDeck_aud_v1',
-  theme:'UdoDeck_theme_v1', layoutTheme:'UdoDeck_ltheme_v1', imgPh:'UdoDeck_imgph_v1',
-  anim:'UdoDeck_anim_v1', count:'UdoDeck_count_v1', vary:'UdoDeck_vary_v1'
+  slides:'udara_slides_v1', topic:'udara_topic_v1', audience:'udara_aud_v1',
+  theme:'udara_theme_v1', layoutTheme:'udara_ltheme_v1', imgPh:'udara_imgph_v1',
+  anim:'udara_anim_v1', count:'udara_count_v1', vary:'udara_vary_v1'
 };
 const PAYSTACK_PK   = 'pk_test_placeholder_key';
-const PAYSTACK_EMAIL= 'guest@UdoDeck.app';
+const PAYSTACK_EMAIL= 'guest@udara.app';
 const AMOUNT_KOBO   = 100000;
 
 /* ── Colour themes — African-inspired palette ─────────────────────────── */
@@ -79,8 +79,10 @@ let currentLayoutTheme   = 'corporate';
 let currentCount         = 10;
 let includeImgPh         = false;
 let animationsEnabled    = false;
-let varyLayouts          = true;   // ON by default — each slide gets a unique composition
+let varyLayouts          = true;
 let uploadedDocText      = '';
+let isUnlocked           = false;   /* true after successful payment — removes watermarks */
+let paymentInProgress    = false;   /* prevents double-click on pay button */
 
 /* ── DOM refs — resolved inside DOMContentLoaded so they're never null ── */
 let $;
@@ -281,7 +283,7 @@ function restoreFromStorage(){
     }
   } catch(e){
     localStorage.removeItem(LS.slides);
-    console.warn('[UdoDeck] Could not restore localStorage:', e);
+    console.warn('[Udara] Could not restore localStorage:', e);
   }
 }
 
@@ -334,14 +336,14 @@ async function handleGenerate(){
       if (!response.ok) {
         /* Read error body so we can log it, then fall through to mock */
         const errData = await response.json().catch(() => ({}));
-        console.warn('[UdoDeck] API returned', response.status, errData);
+        console.warn('[Udara] API returned', response.status, errData);
         /* If it's a config error (500 = key not set), fall back to mock */
         /* If it's a genuine server error, throw so user knows           */
         if (response.status === 400) {
           throw new Error(errData.error || 'Invalid request');
         }
         /* 500/502 = API not configured or Gemini down → use mock */
-        console.warn('[UdoDeck] Falling back to mock generator');
+        console.warn('[Udara] Falling back to mock generator');
         slides = uploadedDocText
           ? generateDocSlides(currentTopic, audience, count, uploadedDocText)
           : generateMockSlides(currentTopic, audience, count);
@@ -356,7 +358,7 @@ async function handleGenerate(){
     } catch (apiErr) {
       /* Network error (offline, CORS, etc.) — fall back to mock silently */
       if (apiErr.name === 'TypeError' && apiErr.message.includes('fetch')) {
-        console.warn('[UdoDeck] Network error, using mock generator:', apiErr.message);
+        console.warn('[Udara] Network error, using mock generator:', apiErr.message);
         slides = uploadedDocText
           ? generateDocSlides(currentTopic, audience, count, uploadedDocText)
           : generateMockSlides(currentTopic, audience, count);
@@ -389,7 +391,7 @@ async function handleGenerate(){
     setLoading(false);
 
   } catch(err){
-    console.error('[UdoDeck] Generation error:', err);
+    console.error('[Udara] Generation error:', err);
     showToast('❌ ' + (err.message || 'Something went wrong. Please try again.'));
     setLoading(false);
   }
@@ -632,9 +634,9 @@ function buildWatermarkOverlay(idx){
   overlay.className = 'watermark-overlay';
   overlay.setAttribute('aria-hidden','true');
 
-  /* Diagonal "UdoDeck PREVIEW" text — repeated in a grid pattern using SVG */
+  /* Diagonal "UDARA PREVIEW" text — repeated in a grid pattern using SVG */
   const W = 800, H = 450;
-  const label = 'UdoDeck PREVIEW';
+  const label = 'UDARA PREVIEW';
   const repeat = 6;        /* how many diagonal rows of text */
   const gap    = 90;       /* vertical gap between rows      */
 
@@ -659,7 +661,7 @@ function buildWatermarkOverlay(idx){
     }
   }
 
-  /* UdoDeck logo mark — centre watermark */
+  /* Udara logo mark — centre watermark */
   const centreWm = `
     <g transform="translate(${W/2-22},${H/2-22})" pointer-events="none" opacity="0.12">
       <circle cx="22" cy="22" r="20" fill="none" stroke="#0F291E" stroke-width="2"/>
@@ -1097,7 +1099,7 @@ function buildTitle(sl,C,LT,defs,bg,decor,num,anim,idx){
   const tags = `
     <rect x="0" y="${tagY}" width="${W}" height="30" fill="#${C.a1}" fill-opacity="${isEleg?0.07:0.1}"/>
     <text x="20" y="${tagY+19}" font-family="Arial" font-size="8" font-weight="700"
-      fill="#${C.a1}" letter-spacing="2">${LT.label.toUpperCase()} · UdoDeck</text>
+      fill="#${C.a1}" letter-spacing="2">${LT.label.toUpperCase()} · UDARA</text>
     <text x="${W-20}" y="${tagY+19}" text-anchor="end" font-family="Arial" font-size="8"
       fill="#${C.mu}" letter-spacing="1">${new Date().getFullYear()}</text>`;
 
@@ -1537,7 +1539,7 @@ function buildClosing(sl,C,LT,defs,bg,decor,num,anim,idx){
   const brand = `
     <text x="${W/2}" y="${H-18}" text-anchor="middle"
       font-family="Arial" font-size="9" font-weight="700"
-      fill="#${C.bg}" letter-spacing="2" fill-opacity="0.8">UdoDeck · ${LT.label.toUpperCase()}</text>`;
+      fill="#${C.bg}" letter-spacing="2" fill-opacity="0.8">UDARA · ${LT.label.toUpperCase()}</text>`;
 
   return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
     ${defs}${bg}${decor}${rings}${rays}${ribbon}${tyText}${accentRule}${sub}${buls}${brand}${num}
@@ -1551,11 +1553,7 @@ function buildClosing(sl,C,LT,defs,bg,decor,num,anim,idx){
    PAYMENT — Tightened against fraud
    ═══════════════════════════════════════════════════════════════════════ */
 
-/* Track whether payment is in progress to prevent double-clicks */
-let paymentInProgress = false;
-
-/* Track used references so the same Paystack callback can't be
-   replayed (e.g. by calling onPaymentSuccess() from the console) */
+/* ── Track used payment references to block replay attacks ───────────── */
 const usedReferences = new Set();
 
 /* Generate a cryptographically random reference for each payment
@@ -1565,7 +1563,7 @@ function generatePaymentRef(){
     crypto.getRandomValues(new Uint8Array(16)),
     b => b.toString(16).padStart(2,'0')
   ).join('');
-  return `UdoDeck_${Date.now()}_${random}`;
+  return `udara_${Date.now()}_${random}`;
 }
 
 async function handlePayment(){
@@ -1611,14 +1609,14 @@ async function handlePayment(){
         { display_name:'Topic',       variable_name:'topic',       value: currentTopic        },
         { display_name:'Theme',       variable_name:'theme',       value: currentLayoutTheme  },
         { display_name:'Slide Count', variable_name:'slide_count', value: String(currentSlides.length) },
-        { display_name:'App Version', variable_name:'app_version', value: 'UdoDeck-v1'          },
+        { display_name:'App Version', variable_name:'app_version', value: 'udara-v1'          },
       ]
     },
 
     callback: async function(response){
       /* ── Verify the reference is the one we sent ─────────────────── */
       if(response.reference !== paymentRef){
-        console.warn('[UdoDeck] Reference mismatch — possible replay attack');
+        console.warn('[Udara] Reference mismatch — possible replay attack');
         showToast('❌ Payment reference mismatch. Please contact support.');
         resetPayButton();
         return;
@@ -1626,7 +1624,7 @@ async function handlePayment(){
 
       /* ── Guard: reference must not have been used before ─────────── */
       if(usedReferences.has(response.reference)){
-        console.warn('[UdoDeck] Duplicate reference — replay attempt blocked');
+        console.warn('[Udara] Duplicate reference — replay attempt blocked');
         showToast('❌ This payment has already been processed.');
         resetPayButton();
         return;
@@ -1656,7 +1654,7 @@ async function handlePayment(){
              return;
            }
          } catch(err){
-           console.error('[UdoDeck] Verification error:', err);
+           console.error('[Udara] Verification error:', err);
            showToast('❌ Verification failed. Please contact support.');
            resetPayButton();
            return;
@@ -1664,7 +1662,7 @@ async function handlePayment(){
       ────────────────────────────────────────────────────────────── */
 
       /* ── Payment confirmed — unlock and download ─────────────────── */
-      console.log('[UdoDeck] Payment verified:', response.reference);
+      console.log('[Udara] Payment verified:', response.reference);
       onPaymentSuccess(response.reference);
     },
 
@@ -1721,7 +1719,7 @@ function onPaymentSuccess(reference){
   exportBar.style.display = 'none';
 
   /* Store the reference so the user can quote it for support */
-  localStorage.setItem('UdoDeck_last_ref', reference || '');
+  localStorage.setItem('udara_last_ref', reference || '');
 
   showToast('✅ Payment confirmed! Building your PowerPoint…');
 
@@ -1783,7 +1781,7 @@ function buildAndDownloadPptx(){
         slide.addShape(pptx.ShapeType.rect,{x:0.5,y:4.0,w:1.8,h:0.05,fill:{color:T.a1}});
         if(sl.subtitle) slide.addText(sl.subtitle,{x:0.5,y:4.2,w:10,h:0.8,fontSize:14,color:T.mu,fontFace:T.font,italic:true});
         slide.addText(`01/${String(N).padStart(2,'0')}`,{x:0.5,y:6.9,w:3,h:0.3,fontSize:8,color:T.a1,fontFace:T.font});
-        slide.addText(`UdoDeck · ${LT.label}`,{x:8,y:6.9,w:5,h:0.3,fontSize:8,color:T.mu,fontFace:T.font,align:'right'});
+        slide.addText(`Udara · ${LT.label}`,{x:8,y:6.9,w:5,h:0.3,fontSize:8,color:T.mu,fontFace:T.font,align:'right'});
         break;
 
       case 'bullets':
@@ -1868,7 +1866,7 @@ function buildAndDownloadPptx(){
         (sl.bullets||[]).slice(0,4).forEach((b,k)=>{
           slide.addText(`· ${b}`,{x:2.0,y:4.85+k*0.42,w:9.3,h:0.38,fontSize:10,color:T.mu,fontFace:T.font,align:'center'});
         });
-        slide.addText(`UdoDeck · ${LT.label} Theme`,{x:0.5,y:6.9,w:12.3,h:0.4,fontSize:9,color:T.bg,fontFace:T.font,align:'center',bold:true});
+        slide.addText(`Udara · ${LT.label} Theme`,{x:0.5,y:6.9,w:12.3,h:0.4,fontSize:9,color:T.bg,fontFace:T.font,align:'center',bold:true});
         break;
 
       default:
@@ -1877,14 +1875,14 @@ function buildAndDownloadPptx(){
   });
 
   const safeName = currentTopic.replace(/[^a-z0-9\s_-]/gi,'').trim().replace(/\s+/g,'_').slice(0,50)||'presentation';
-  pptx.writeFile({fileName:`${safeName}_UdoDeck.pptx`})
+  pptx.writeFile({fileName:`${safeName}_Udara.pptx`})
     .then(()=>{
-      showToast('📥 PowerPoint downloaded! Enjoy — from UdoDeck 🇳🇬');
+      showToast('📥 PowerPoint downloaded! Enjoy — from Udara 🇳🇬');
       localStorage.removeItem(LS.slides);
       localStorage.removeItem(LS.topic);
       localStorage.removeItem(LS.audience);
     })
-    .catch(err=>{ console.error('[UdoDeck] PPTX error:',err); showToast('❌ Download failed — please try again.'); });
+    .catch(err=>{ console.error('[Udara] PPTX error:',err); showToast('❌ Download failed — please try again.'); });
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1932,4 +1930,4 @@ function showToast(msg){
   _toast = setTimeout(() => toast.classList.remove('show'), 3500);
 }
 function delay(ms){ return new Promise(r => setTimeout(r, ms)); }
-// End of UdoDeck app.js
+// End of Udara app.js
