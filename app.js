@@ -329,10 +329,19 @@ async function handleGenerate(){
        ─────────────────────────────────────────────
     ────────────────────────────────────────────────────────────────── */
 
-    await simulateProgress(count, (p,l)=>{setProgress(p);setProgressLabel(l);});
-    const slides = uploadedDocText
-      ? generateDocSlides(currentTopic, audience, count, uploadedDocText)
-      : generateMockSlides(currentTopic, audience, count);
+   const response = await fetch('/api/generate', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    topic:       currentTopic,
+    audience:    currentAudience,
+    layoutTheme: currentLayoutTheme,
+    count:       currentCount,
+    docText:     uploadedDocText
+  })
+});
+if (!response.ok) throw new Error('API error: ' + response.status);
+const slides = await response.json();
 
     setProgress(96); setProgressLabel('Rendering preview…');
 
