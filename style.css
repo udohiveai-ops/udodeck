@@ -1,0 +1,827 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Udo-Deck — Silicon Valley Minimalist × Afro-Nordic Executive
+   Design System v2
+   ═══════════════════════════════════════════════════════════════════ */
+:root {
+  /* Canvas */
+  --canvas:       #F7F5F0;
+  --canvas-mid:   #F0EDE6;
+  --surface:      #FFFFFF;
+  --surface-mid:  #FAFAF8;
+
+  /* Borders */
+  --border:       #E8E4DC;
+  --border-mid:   #D6D0C4;
+
+  /* Brand: deep executive forest-charcoal */
+  --forest:       #0F291E;
+  --forest-hover: #1C362B;
+  --forest-light: #2C4A3A;
+
+  /* Accent tones — refined for light background */
+  --gold:         #C8960A;
+  --gold-bg:      #FBF4E0;
+  --terracotta:   #C05A1F;
+  --terra-bg:     #FDF0E8;
+  --savanna:      #2E7A4E;
+  --savanna-bg:   #EBF5EF;
+
+  /* Typography */
+  --ink:          #111827;
+  --ink-mid:      #374151;
+  --ink-light:    #6B7280;
+  --ink-dim:      #9CA3AF;
+
+  /* Radii */
+  --r-sm:  6px;
+  --r-md:  12px;
+  --r-lg:  18px;
+  --r-xl:  26px;
+
+  /* Fonts */
+  --ff-display: 'Instrument Serif', Georgia, serif;
+  --ff-ui:      'Inter Tight', 'Inter', sans-serif;
+  --ff-body:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Motion */
+  --ease:     200ms cubic-bezier(0.4,0,0.2,1);
+  --ease-out: 280ms cubic-bezier(0.0,0,0.2,1);
+
+  /* Shadows */
+  --shadow-xs:   0 1px 2px rgba(15,41,30,.04);
+  --shadow-sm:   0 1px 4px rgba(15,41,30,.06),0 2px 8px rgba(15,41,30,.04);
+  --shadow-md:   0 4px 16px rgba(15,41,30,.08),0 1px 4px rgba(15,41,30,.04);
+  --shadow-lg:   0 8px 32px rgba(15,41,30,.10),0 2px 8px rgba(15,41,30,.06);
+  --shadow-hover:0 16px 48px rgba(15,41,30,.14),0 4px 12px rgba(15,41,30,.08);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   DARK THEME — activated by adding class="dark" to <html>
+   Deep kola-nut canvas, warm ember accents, premium feel
+   ══════════════════════════════════════════════════════════════════ */
+html.dark {
+  /* Canvas — deep warm brown-black, not cold blue-black */
+  --canvas:       #0D0B08;
+  --canvas-mid:   #141109;
+  --surface:      #1C1810;
+  --surface-mid:  #211D14;
+
+  /* Borders — warm amber-tinged */
+  --border:       rgba(255,200,100,.08);
+  --border-mid:   rgba(255,200,100,.14);
+
+  /* Brand stays forest but glows warmer in dark */
+  --forest:       #4ABA7A;        /* inverted — bright savanna green on dark */
+  --forest-hover: #5DD68E;
+  --forest-light: #3DA066;
+
+  /* Accents — same family, adjusted luminance for dark bg */
+  --gold:         #E8AD12;
+  --gold-bg:      rgba(232,173,18,.1);
+  --terracotta:   #E07840;
+  --terra-bg:     rgba(224,120,64,.1);
+  --savanna:      #4ABA7A;
+  --savanna-bg:   rgba(74,186,122,.1);
+
+  /* Typography — warm cream hierarchy */
+  --ink:          #F5F0E8;
+  --ink-mid:      #D4CABC;
+  --ink-light:    #8A8070;
+  --ink-dim:      #5A5248;
+
+  /* Shadows — darker, warmer */
+  --shadow-xs:   0 1px 2px rgba(0,0,0,.3);
+  --shadow-sm:   0 1px 4px rgba(0,0,0,.4),0 2px 8px rgba(0,0,0,.3);
+  --shadow-md:   0 4px 16px rgba(0,0,0,.5),0 1px 4px rgba(0,0,0,.3);
+  --shadow-lg:   0 8px 32px rgba(0,0,0,.6),0 2px 8px rgba(0,0,0,.4);
+  --shadow-hover:0 16px 48px rgba(0,0,0,.7),0 4px 12px rgba(0,0,0,.5);
+}
+
+/* ── Smooth theme transition — all colour changes animate ─────────── */
+*, *::before, *::after {
+  transition:
+    background-color 300ms ease,
+    border-color     300ms ease,
+    color            200ms ease,
+    box-shadow       300ms ease;
+}
+/* Exclude elements where transition would look wrong */
+input[type=range], .swatch, .slide-card svg * {
+  transition: none !important;
+}
+
+/* Dark mode body gradient override */
+html.dark body::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(232,173,18,.06) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 0% 100%, rgba(74,186,122,.04) 0%,transparent 60%);
+}
+
+/* Dark mode — form card kente stripe uses brighter versions */
+html.dark .form-card::before {
+  background: linear-gradient(90deg,
+    #E07840 0%,  #E07840 33%,
+    #E8AD12 33%, #E8AD12 66%,
+    #4ABA7A 66%, #4ABA7A 100%
+  );
+}
+
+/* Dark mode — export bar kente stripe */
+html.dark #export-bar::before {
+  background: linear-gradient(90deg,
+    #4ABA7A 0%,  #4ABA7A 33%,
+    #E8AD12 33%, #E8AD12 66%,
+    #E07840 66%, #E07840 100%
+  );
+}
+
+/* Dark mode — input backgrounds */
+html.dark textarea,
+html.dark select {
+  background: var(--surface-mid);
+  color: var(--ink);
+}
+
+/* Dark mode — select dropdown options */
+html.dark select option {
+  background: #1C1810;
+  color: #F5F0E8;
+}
+
+/* Dark mode — price badge */
+html.dark .price-badge {
+  background: var(--surface);
+  color: var(--forest);
+  border-color: var(--border-mid);
+}
+
+/* Dark mode — upload zone */
+html.dark .upload-zone {
+  background: var(--surface-mid);
+  border-color: var(--border-mid);
+}
+
+/* Dark mode — slide card wrapper — warm dark surface, not white */
+html.dark .slide-card {
+  border-color: rgba(255,200,100,.1);
+  box-shadow: var(--shadow-md);
+}
+
+/* Dark mode — toggle rows */
+html.dark .toggle-row {
+  background: var(--surface-mid);
+}
+
+/* Dark mode — toast */
+html.dark #toast {
+  background: #1C1810;
+  color: var(--ink);
+  border-left-color: var(--gold);
+}
+
+/* Dark mode — export bar */
+html.dark #export-bar {
+  background: var(--surface);
+}
+
+/* Dark mode — form card corner ornament matches surface */
+html.dark .form-card::after {
+  border-color: var(--border);
+}
+
+/* ── Theme toggle button ───────────────────────────────────────────── */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-family: var(--ff-body);
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--ink-light);
+  box-shadow: var(--shadow-xs);
+  user-select: none;
+  transition: background var(--ease), border-color var(--ease),
+              color var(--ease), box-shadow var(--ease);
+}
+.theme-toggle:hover {
+  background: var(--canvas-mid);
+  border-color: var(--border-mid);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+.theme-toggle:active {
+  transform: scale(.97);
+}
+
+/* The sun/moon icon container */
+.theme-toggle-icon {
+  width: 18px;
+  height: 18px;
+  position: relative;
+  flex-shrink: 0;
+}
+/* Sun rays — visible in light mode */
+.theme-toggle-icon .sun,
+.theme-toggle-icon .moon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+.theme-toggle-icon .moon {
+  opacity: 0;
+  transform: rotate(-30deg) scale(.7);
+}
+
+/* Dark mode — swap sun↔moon */
+html.dark .theme-toggle-icon .sun  {
+  opacity: 0;
+  transform: rotate(30deg) scale(.7);
+}
+html.dark .theme-toggle-icon .moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* Dark mode — toggle button itself */
+html.dark .theme-toggle {
+  background: var(--surface);
+  border-color: var(--border-mid);
+  color: var(--ink-light);
+}
+html.dark .theme-toggle:hover {
+  background: var(--surface-mid);
+  color: var(--ink);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+body{
+  background:var(--canvas);
+  color:var(--ink-mid);
+  font-family:var(--ff-body);
+  font-size:15px;
+  line-height:1.6;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* Subtle warm gradient — no harsh glows, just a breath of warmth */
+body::before{
+  content:'';
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(200,150,10,.05) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 0%  100%, rgba(15,41,30,.03) 0%,transparent 60%);
+}
+
+/* Paper noise texture — gives the warm sand canvas depth */
+body::after{
+  content:'';
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  opacity:.4;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background-size:160px;
+}
+
+.shell{position:relative;z-index:1;max-width:1020px;margin:0 auto;padding:0 28px 100px}
+
+/* ── Header ───────────────────────────────────────────────────── */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:28px 0 22px;
+  border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:16px;
+}
+
+.logo{
+  font-family:var(--ff-display);
+  font-weight:400;
+  font-size:1.7rem;
+  letter-spacing:-.01em;
+  color:var(--ink);
+  display:flex;align-items:center;gap:12px;
+  line-height:1;
+}
+.logo-mark{width:30px;height:30px;flex-shrink:0}
+.logo span{color:var(--forest);font-style:italic}
+.logo-sub{
+  font-family:var(--ff-body);
+  font-size:.6rem;font-weight:500;
+  color:var(--ink-dim);
+  letter-spacing:.18em;text-transform:uppercase;
+  display:block;margin-top:2px;
+}
+
+.price-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--ff-body);font-size:.72rem;font-weight:600;
+  color:var(--forest);
+  background:var(--surface);
+  border:1px solid var(--border-mid);
+  padding:6px 14px;border-radius:100px;
+  letter-spacing:.02em;
+  box-shadow:var(--shadow-xs);
+}
+.price-badge::before{
+  content:'';display:block;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--savanna);
+}
+
+/* ── Hero ─────────────────────────────────────────────────────── */
+.hero{text-align:center;padding:72px 0 56px;position:relative}
+
+.hero-ring{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:500px;height:500px;max-width:92vw;
+  border-radius:50%;
+  border:1px solid rgba(15,41,30,.05);
+  pointer-events:none;
+}
+.hero-ring::before{
+  content:'';position:absolute;inset:32px;border-radius:50%;
+  border:1px solid rgba(200,150,10,.06);
+}
+.hero-ring::after{
+  content:'';position:absolute;inset:66px;border-radius:50%;
+  border:1px solid rgba(15,41,30,.04);
+}
+
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--ff-body);font-size:.7rem;font-weight:600;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-light);margin-bottom:22px;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{
+  content:'';display:block;width:20px;height:1px;background:var(--border-mid);
+}
+
+h1{
+  font-family:var(--ff-display);
+  font-size:clamp(2.8rem,6.5vw,4.8rem);
+  font-weight:400;
+  font-style:italic;
+  line-height:1.05;
+  letter-spacing:-.025em;
+  color:var(--ink);
+  margin-bottom:20px;
+}
+h1 em{
+  font-style:normal;
+  color:var(--forest);
+  position:relative;
+}
+h1 em::after{
+  content:'';
+  position:absolute;left:0;right:0;bottom:-5px;height:2px;
+  background:linear-gradient(90deg,var(--terracotta),var(--gold),var(--savanna));
+  border-radius:1px;
+}
+
+.hero-sub{
+  font-size:1.02rem;color:var(--ink-light);
+  max-width:460px;margin:0 auto;
+  font-weight:400;line-height:1.72;
+}
+
+.hero-flag{
+  display:inline-flex;align-items:center;gap:10px;
+  margin-top:26px;font-size:.72rem;
+  color:var(--ink-dim);font-weight:500;letter-spacing:.04em;
+}
+.hero-flag-dots{display:flex;gap:3px}
+.hero-flag-dots span{width:8px;height:8px;border-radius:50%}
+
+/* ── Form card — crisp white surface on warm sand ─────────────── */
+.form-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-xl);
+  padding:38px;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-md);
+}
+/* Kente stripe — refined 3px top border */
+.form-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,
+    var(--terracotta) 0%,   var(--terracotta) 33%,
+    var(--gold)       33%,  var(--gold)       66%,
+    var(--savanna)    66%,  var(--savanna)    100%
+  );
+  border-radius:var(--r-xl) var(--r-xl) 0 0;
+}
+.form-card::after{
+  content:'';position:absolute;bottom:0;right:0;
+  width:70px;height:70px;
+  border-top:1px solid var(--border);
+  border-left:1px solid var(--border);
+  border-radius:var(--r-xl) 0 var(--r-xl) 0;
+  pointer-events:none;
+}
+
+/* ── Labels ───────────────────────────────────────────────────── */
+label{
+  display:block;
+  font-family:var(--ff-body);font-size:.7rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink);margin-bottom:8px;
+}
+
+textarea,select,input[type=range]{font-family:var(--ff-body)}
+
+/* ── Textarea ─────────────────────────────────────────────────── */
+textarea{
+  width:100%;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-md);
+  color:var(--ink);font-size:.95rem;font-weight:400;
+  padding:14px 16px;resize:vertical;min-height:114px;outline:none;
+  transition:border-color var(--ease),box-shadow var(--ease);
+  line-height:1.65;
+  box-shadow:var(--shadow-xs);
+}
+textarea::placeholder{color:var(--ink-dim)}
+textarea:focus{
+  border-color:var(--forest);
+  box-shadow:0 0 0 3px rgba(15,41,30,.08),var(--shadow-xs);
+}
+
+/* ── Select ───────────────────────────────────────────────────── */
+select{
+  width:100%;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-md);
+  color:var(--ink);font-size:.88rem;font-weight:500;
+  padding:11px 38px 11px 14px;outline:none;cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;
+  transition:border-color var(--ease),box-shadow var(--ease);
+  box-shadow:var(--shadow-xs);
+}
+select:focus{
+  border-color:var(--forest);
+  box-shadow:0 0 0 3px rgba(15,41,30,.08),var(--shadow-xs);
+  outline:none;
+}
+select option{background:#fff;color:var(--ink)}
+
+/* ── Grid helpers ─────────────────────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:640px){
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .form-card{padding:24px 20px}
+  .shell{padding:0 16px 80px}
+}
+.field{display:flex;flex-direction:column}
+
+.form-divider{height:1px;background:var(--border);margin:24px 0}
+
+.form-section-label{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--ff-body);font-size:.68rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--forest);margin-bottom:12px;
+}
+.form-section-label::before{
+  content:'';width:12px;height:2px;
+  background:var(--forest);border-radius:1px;display:block;
+}
+
+/* ── Upload zone ──────────────────────────────────────────────── */
+.upload-zone{
+  border:1.5px dashed var(--border-mid);
+  border-radius:var(--r-md);padding:20px 16px;text-align:center;
+  cursor:pointer;
+  transition:border-color var(--ease),background var(--ease),box-shadow var(--ease);
+  position:relative;background:var(--surface-mid);
+}
+.upload-zone:hover,.upload-zone.drag-over{
+  border-color:var(--forest);background:var(--surface);
+  box-shadow:0 0 0 3px rgba(15,41,30,.06);
+}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{font-size:1.4rem;margin-bottom:6px}
+.upload-label{font-size:.78rem;color:var(--ink-light);line-height:1.5}
+.upload-label strong{color:var(--forest);font-weight:600}
+.upload-file-name{
+  margin-top:8px;font-size:.73rem;color:var(--savanna);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:none;
+}
+.upload-file-name.visible{display:block}
+
+/* ── Colour swatches ──────────────────────────────────────────── */
+.theme-swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.swatch{
+  width:30px;height:30px;border-radius:50%;cursor:pointer;
+  border:2px solid transparent;
+  transition:transform var(--ease),border-color var(--ease),box-shadow var(--ease);
+  position:relative;flex-shrink:0;
+  box-shadow:var(--shadow-xs);
+}
+.swatch:hover{transform:scale(1.2)}
+.swatch.active{
+  border-color:var(--ink);
+  box-shadow:0 0 0 3px rgba(17,24,39,.12);
+  transform:scale(1.1);
+}
+.swatch::after{
+  content:'✓';position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:rgba(255,255,255,.95);
+  opacity:0;transition:opacity var(--ease);
+}
+.swatch.active::after{opacity:1}
+
+/* ── Slider ───────────────────────────────────────────────────── */
+.slide-count-row{display:flex;align-items:center;gap:12px;margin-top:10px}
+.slide-count-row input[type=range]{
+  flex:1;-webkit-appearance:none;height:4px;border-radius:2px;
+  background:var(--border);outline:none;cursor:pointer;
+}
+.slide-count-row input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+  background:var(--forest);cursor:pointer;
+  border:2px solid var(--surface);
+  box-shadow:var(--shadow-sm);
+  transition:box-shadow var(--ease);
+}
+.slide-count-row input[type=range]::-webkit-slider-thumb:hover{
+  box-shadow:0 0 0 5px rgba(15,41,30,.12),var(--shadow-sm);
+}
+.slide-count-val{
+  font-family:var(--ff-ui);font-size:1.05rem;font-weight:700;
+  color:var(--forest);min-width:26px;text-align:right;
+}
+.slide-count-hint{font-size:.68rem;color:var(--ink-dim);margin-top:4px}
+
+/* ── Toggle rows ──────────────────────────────────────────────── */
+.toggle-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-top:8px;padding:12px 14px;
+  background:var(--surface-mid);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-md);cursor:pointer;
+  transition:border-color var(--ease),background var(--ease),box-shadow var(--ease);
+  box-shadow:var(--shadow-xs);
+}
+.toggle-row:hover{
+  border-color:var(--border-mid);background:var(--surface);
+  box-shadow:var(--shadow-sm);
+}
+.toggle-title{font-size:.84rem;color:var(--ink);font-weight:500}
+.toggle-desc{font-size:.7rem;color:var(--ink-dim);margin-top:2px}
+.toggle-switch{
+  width:40px;height:22px;
+  background:var(--border-mid);border-radius:11px;
+  position:relative;flex-shrink:0;
+  transition:background var(--ease);
+}
+.toggle-switch::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:16px;height:16px;border-radius:50%;
+  background:#fff;
+  box-shadow:0 1px 3px rgba(0,0,0,.15);
+  transition:transform var(--ease);
+}
+.toggle-switch.on{background:var(--forest)}
+.toggle-switch.on::after{transform:translateX(18px)}
+
+/* ── Generate CTA ─────────────────────────────────────────────── */
+#generate-btn{
+  margin-top:24px;width:100%;
+  padding:17px 32px;
+  background:var(--forest);
+  color:#fff;
+  font-family:var(--ff-ui);font-size:.9rem;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;
+  border:none;border-radius:var(--r-md);cursor:pointer;
+  transition:background var(--ease),transform var(--ease-out),box-shadow var(--ease);
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-sm);
+}
+/* Diagonal texture overlay */
+#generate-btn::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,.03) 0px,rgba(255,255,255,.03) 1px,
+    transparent 1px,transparent 6px
+  );
+}
+/* Hover shimmer sweep */
+#generate-btn::after{
+  content:'';position:absolute;top:0;left:-100%;
+  width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+  transition:left 400ms ease;
+}
+#generate-btn:hover{
+  background:var(--forest-hover);
+  transform:translateY(-1px);
+  box-shadow:var(--shadow-lg);
+}
+#generate-btn:hover::after{left:160%}
+#generate-btn:active{transform:translateY(0);box-shadow:var(--shadow-sm)}
+#generate-btn:disabled{
+  background:var(--border-mid);color:var(--ink-dim);
+  cursor:not-allowed;transform:none;box-shadow:none;
+}
+.btn-spinner{
+  display:inline-block;width:14px;height:14px;
+  border:2px solid rgba(255,255,255,.3);border-top-color:#fff;
+  border-radius:50%;animation:spin .7s linear infinite;
+  vertical-align:middle;margin-right:8px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Progress ─────────────────────────────────────────────────── */
+#progress-wrap{
+  margin-top:14px;height:3px;
+  background:var(--border);border-radius:100px;overflow:hidden;display:none;
+}
+#progress-bar{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--forest),var(--terracotta),var(--gold));
+  border-radius:100px;transition:width 350ms ease;
+}
+#progress-label{
+  margin-top:8px;font-size:.75rem;
+  color:var(--ink-light);text-align:center;display:none;
+}
+
+/* ── Preview section ──────────────────────────────────────────── */
+#preview-section{margin-top:64px;display:none}
+
+.section-header{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:24px;flex-wrap:wrap;gap:12px;
+}
+.section-title{
+  font-family:var(--ff-display);font-size:1.75rem;
+  font-weight:400;font-style:italic;
+  color:var(--ink);letter-spacing:-.01em;
+}
+.slide-count-badge{
+  font-size:.72rem;font-weight:600;
+  color:var(--savanna);background:var(--savanna-bg);
+  border:1px solid rgba(46,122,78,.2);
+  padding:5px 14px;border-radius:100px;
+}
+
+/* ── Slide grid — white cards on warm sand ────────────────────── */
+#slide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+
+.slide-card{
+  background:var(--surface);
+  border-radius:var(--r-md);overflow:hidden;aspect-ratio:16/9;
+  transition:transform var(--ease-out),box-shadow var(--ease-out);
+  box-shadow:var(--shadow-sm);
+  border:1px solid rgba(232,228,220,.7);
+  cursor:default;
+}
+.slide-card:hover{
+  transform:translateY(-4px) scale(1.012);
+  box-shadow:var(--shadow-hover);
+  border-color:transparent;
+}
+.slide-card svg{width:100%;height:100%;display:block}
+
+/* Animations */
+.animations-on .slide-card svg .anim-fade{animation:cardFade .5s ease forwards}
+.animations-on .slide-card svg .anim-rise{animation:cardRise .5s ease forwards}
+.animations-on .slide-card svg .anim-bar{animation:barGrow .6s ease forwards;transform-origin:bottom}
+@keyframes cardFade{from{opacity:0}to{opacity:1}}
+@keyframes cardRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes barGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+/* ── Export bar ───────────────────────────────────────────────── */
+#export-bar{
+  margin-top:28px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-xl);padding:28px 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;flex-wrap:wrap;
+  position:relative;overflow:hidden;
+  box-shadow:var(--shadow-md);
+}
+#export-bar::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,
+    var(--savanna)    0%,   var(--savanna)    33%,
+    var(--gold)       33%,  var(--gold)       66%,
+    var(--terracotta) 66%,  var(--terracotta) 100%
+  );
+  border-radius:var(--r-xl) var(--r-xl) 0 0;
+}
+
+.export-bar-label{
+  font-family:var(--ff-display);font-size:1.15rem;
+  font-weight:400;font-style:italic;
+  color:var(--ink);letter-spacing:-.01em;margin-bottom:4px;
+}
+.export-bar-sub{font-size:.82rem;color:var(--ink-light)}
+.export-bar-right{display:flex;align-items:center;gap:18px;flex-shrink:0}
+.export-price-tag{
+  font-family:var(--ff-ui);font-size:1.7rem;font-weight:800;
+  color:var(--forest);letter-spacing:-.04em;
+}
+.export-disclaimer{font-size:.68rem;color:var(--ink-dim);margin-top:10px}
+
+#pay-btn{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:14px 26px;
+  background:var(--forest);color:#fff;
+  font-family:var(--ff-ui);font-size:.85rem;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;
+  border:none;border-radius:var(--r-md);cursor:pointer;
+  transition:background var(--ease),transform var(--ease-out),box-shadow var(--ease);
+  white-space:nowrap;box-shadow:var(--shadow-sm);
+}
+#pay-btn:hover{
+  background:var(--forest-hover);
+  transform:translateY(-1px);box-shadow:var(--shadow-lg);
+}
+#pay-btn:active{transform:translateY(0)}
+
+/* ── Success banner ───────────────────────────────────────────── */
+#success-banner{
+  display:none;background:var(--savanna-bg);
+  border:1px solid rgba(46,122,78,.25);
+  border-radius:var(--r-md);padding:16px 22px;
+  text-align:center;margin-bottom:20px;
+}
+#success-banner p{font-size:.9rem;color:var(--savanna);font-weight:600}
+
+/* ── Toast ────────────────────────────────────────────────────── */
+#toast{
+  position:fixed;bottom:28px;right:28px;
+  background:var(--ink);border:none;
+  border-left:3px solid var(--gold);
+  border-radius:var(--r-md);padding:13px 18px;
+  font-size:.83rem;color:#fff;max-width:300px;z-index:9999;
+  transform:translateY(80px);opacity:0;
+  transition:transform 350ms cubic-bezier(.4,0,.2,1),opacity 350ms;
+  pointer-events:none;box-shadow:var(--shadow-lg);
+}
+#toast.show{transform:translateY(0);opacity:1}
+
+/* ── Footer ───────────────────────────────────────────────────── */
+footer{
+  margin-top:80px;padding-top:24px;
+  border-top:1px solid var(--border);
+  text-align:center;font-size:.72rem;color:var(--ink-dim);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.footer-kente{display:flex;gap:5px;align-items:center}
+.footer-kente span{display:block;width:16px;height:3px;border-radius:2px}
+
+.hidden{display:none!important}
+.mt-16{margin-top:16px}
+
+/* ── Watermark overlay — sits over every slide card until payment ─────── */
+.watermark-overlay{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;   /* clicks pass through to the card beneath */
+  z-index:10;
+  border-radius:var(--r-md);
+  overflow:hidden;
+  /* Subtle frosted-glass tint — enough to deter screenshots
+     without making the content unreadable for evaluation      */
+  background:rgba(247,245,240,0.08);
+}
+/* Dark mode watermark tint */
+html.dark .watermark-overlay{
+  background:rgba(13,11,8,0.10);
+}
+
+/* ── Right-click protection — discourages save-image-as ─────────────── */
+#slide-grid{
+  -webkit-user-select:none;
+  user-select:none;
+}
+/* CSS-only pointer block on SVG images inside cards */
+.slide-card svg{
+  pointer-events:none;
+}
+/* End of Udo-Deck CSS */

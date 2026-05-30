@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Udo-Deck — AI Slide Deck Generator</title>
+
+<!-- ── Fonts ──────────────────────────────────────────────────────────── -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@600;700;800&display=swap" rel="stylesheet"/>
+
+<!-- ── Styles ─────────────────────────────────────────────────────────── -->
+<!-- Edit style.css to change colours, fonts, spacing, and layout -->
+<link rel="stylesheet" href="style.css"/>
+
+<!-- ── PptxGenJS (PowerPoint export — do not remove) ─────────────────── -->
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       HEADER
+  ════════════════════════════════════════════════════════════════════ -->
+  <header>
+    <div class="logo">
+      <!-- Adinkra-inspired logo mark — edit stroke colours in style.css -->
+      <svg class="logo-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="16" cy="16" r="14" stroke="#0F291E" stroke-width="1.5" stroke-opacity="0.35"/>
+        <circle cx="16" cy="16" r="9"  stroke="#C8960A" stroke-width="1"   stroke-opacity="0.5"/>
+        <circle cx="16" cy="16" r="4"  fill="#0F291E"   fill-opacity="0.85"/>
+        <line x1="16" y1="2"  x2="16" y2="30" stroke="#0F291E" stroke-width="0.8" stroke-opacity="0.25"/>
+        <line x1="2"  y1="16" x2="30" y2="16" stroke="#0F291E" stroke-width="0.8" stroke-opacity="0.25"/>
+        <line x1="6"  y1="6"  x2="26" y2="26" stroke="#C8960A" stroke-width="0.5" stroke-opacity="0.3"/>
+        <line x1="26" y1="6"  x2="6"  y2="26" stroke="#C8960A" stroke-width="0.5" stroke-opacity="0.3"/>
+      </svg>
+      <div>
+        Udo<span>-Deck</span>
+        <span class="logo-sub">by Africa, for Africa</span>
+      </div>
+    </div>
+    <div class="price-badge">₦1,000 per deck · No subscription</div>
+
+    <!-- Dark / Light mode toggle -->
+    <button class="theme-toggle" id="theme-toggle-btn" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+      <div class="theme-toggle-icon">
+        <span class="sun">☀️</span>
+        <span class="moon">🌙</span>
+      </div>
+      <span id="theme-toggle-label">Dark mode</span>
+    </button>
+  </header>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       HERO
+  ════════════════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <!-- Decorative concentric ring — styled in style.css (.hero-ring) -->
+    <div class="hero-ring"></div>
+
+    <div class="hero-eyebrow">AI-Powered Presentations · Made in Africa</div>
+    <h1>From your ideas to<br/><em>beautiful slides</em></h1>
+    <p class="hero-sub">
+      Generate a full slide deck in seconds. Preview for free.
+      Pay ₦1,000 only when you're ready to download your editable
+      PowerPoint — no account, no hassle.
+    </p>
+
+    <div class="hero-flag">
+      <div class="hero-flag-dots">
+        <span style="background:#3d9e5f"></span>
+        <span style="background:#f5b800"></span>
+        <span style="background:#e8631a"></span>
+      </div>
+      Built for Nigerian students, startups &amp; professionals
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       MAIN FORM CARD
+  ════════════════════════════════════════════════════════════════════ -->
+  <section class="form-card">
+
+    <!-- Topic input -->
+    <div class="field">
+      <label for="topic-input">What's your presentation about?</label>
+      <textarea
+        id="topic-input"
+        placeholder="e.g. 'The future of renewable energy in Nigeria' · 'How fintech is reshaping banking in Africa' · 'My final year project on agritech…'"
+      ></textarea>
+    </div>
+
+    <!-- Document upload -->
+    <div class="field mt-16">
+      <label>
+        Import a document
+        <span style="color:var(--ink-dim);font-size:.73rem;letter-spacing:0;text-transform:none;font-weight:400;">
+          (optional — PDF or Word · content used directly in slides)
+        </span>
+      </label>
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="doc-upload" accept=".pdf,.doc,.docx"/>
+        <div class="upload-icon">📄</div>
+        <div class="upload-label">
+          <strong>Click to upload</strong> or drag &amp; drop<br/>
+          .pdf · .doc · .docx
+        </div>
+        <div class="upload-file-name" id="upload-file-name"></div>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+    <div class="form-section-label">Deck Configuration</div>
+
+    <!-- Row: audience / layout theme / slide count -->
+    <div class="grid-3">
+      <div class="field">
+        <label for="audience-select">Target audience</label>
+        <select id="audience-select">
+          <option value="startup">🚀 Startup — Professional</option>
+          <option value="student">🎓 Student — Educational</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="layout-theme-select">Layout theme</label>
+        <select id="layout-theme-select">
+          <option value="corporate">🏢 Corporate</option>
+          <option value="school">🏫 School</option>
+          <option value="bold">💥 Bold</option>
+          <option value="futuristic">🚀 Futuristic</option>
+          <option value="minimalist">⬜ Minimalist</option>
+          <option value="creative">🎨 Creative Studio</option>
+          <option value="elegant">💎 Elegant / Luxury</option>
+          <option value="tech">⚙️ Tech / SaaS</option>
+          <option value="vintage">📻 Vintage / Retro</option>
+          <option value="vibrant">🌈 Vibrant / Pop</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>
+          Number of slides
+          <span id="slide-count-display" style="color:var(--forest);font-weight:700;">10</span>
+        </label>
+        <div class="slide-count-row">
+          <input type="range" id="slide-count" min="3" max="30" value="10" step="1"/>
+          <div class="slide-count-val" id="slide-count-val">10</div>
+        </div>
+        <div class="slide-count-hint">3 min · 30 max</div>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+    <div class="form-section-label">Presentation Style</div>
+
+    <!-- Row: colour swatches / toggles -->
+    <div class="grid-2">
+      <div class="field">
+        <label>Colour theme</label>
+        <!-- Swatches injected by app.js (initSwatches) -->
+        <div class="theme-swatches" id="theme-swatches"></div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="field">
+          <label>Image placeholders</label>
+          <div class="toggle-row" id="img-toggle-row" onclick="toggleOpt('img')">
+            <div>
+              <div class="toggle-title">Include image slots</div>
+              <div class="toggle-desc">Dashed boxes in .pptx for photos</div>
+            </div>
+            <div class="toggle-switch" id="img-toggle-switch"></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Slide animations</label>
+          <div class="toggle-row" id="anim-toggle-row" onclick="toggleOpt('anim')">
+            <div>
+              <div class="toggle-title">Enable animations</div>
+              <div class="toggle-desc">Fade &amp; rise effects in preview</div>
+            </div>
+            <div class="toggle-switch" id="anim-toggle-switch"></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Layout variation</label>
+          <div class="toggle-row" id="vary-toggle-row" onclick="toggleOpt('vary')">
+            <div>
+              <div class="toggle-title">Vary layout per slide</div>
+              <div class="toggle-desc">Unique background &amp; composition each slide</div>
+            </div>
+            <!-- ON by default — toggled by app.js -->
+            <div class="toggle-switch on" id="vary-toggle-switch"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generate button -->
+    <button id="generate-btn" onclick="handleGenerate()">✦ Generate My Slides</button>
+
+    <!-- Progress feedback -->
+    <div id="progress-wrap"><div id="progress-bar"></div></div>
+    <div id="progress-label"></div>
+
+  </section><!-- /.form-card -->
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       SLIDE PREVIEW SECTION
+       (hidden until slides are generated — shown by app.js)
+  ════════════════════════════════════════════════════════════════════ -->
+  <section id="preview-section">
+
+    <!-- Success banner (shown after payment) -->
+    <div id="success-banner">
+      <p>✅ Payment confirmed! Your PowerPoint is downloading now…</p>
+    </div>
+
+    <!-- Section header -->
+    <div class="section-header">
+      <div class="section-title">Your Slides</div>
+      <div class="slide-count-badge" id="slide-count-badge">– slides ready</div>
+    </div>
+
+    <!-- Slide grid — cards injected by app.js (renderSlides) -->
+    <div id="slide-grid"></div>
+
+    <!-- Export / payment bar -->
+    <div id="export-bar">
+      <div>
+        <div class="export-bar-label">Ready to take this further?</div>
+        <div class="export-bar-sub">
+          Download your fully editable PowerPoint (.pptx) — one-time payment, no account needed.
+        </div>
+        <div class="export-disclaimer">
+          Secured by Paystack · ₦1,000 = 100,000 kobo · One-time charge
+        </div>
+      </div>
+      <div class="export-bar-right">
+        <div class="export-price-tag">₦1,000</div>
+        <button id="pay-btn" onclick="handlePayment()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2"/>
+            <line x1="1" y1="10" x2="23" y2="10"/>
+          </svg>
+          Download PowerPoint
+        </button>
+      </div>
+    </div>
+
+  </section><!-- /#preview-section -->
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-kente">
+      <span style="background:var(--savanna)"></span>
+      <span style="background:var(--gold)"></span>
+      <span style="background:var(--terracotta)"></span>
+      <span style="background:var(--gold)"></span>
+      <span style="background:var(--savanna)"></span>
+    </div>
+    <p>Udo-Deck · Built with ❤️ in Nigeria · PptxGenJS + Paystack · Your slides never leave your browser</p>
+  </footer>
+
+</div><!-- /.shell -->
+
+<!-- Toast notification (shown by app.js) -->
+<div id="toast" role="alert" aria-live="polite"></div>
+
+<!-- ── App Logic ─────────────────────────────────────────────────────── -->
+<!-- Edit app.js to change AI integration, slide generation, and PPTX export -->
+<script src="app.js"></script>
+
+</body>
+</html>
