@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════
-   Udo-Deck — Silicon Valley Minimalist × Afro-Nordic Executive
+   UdoDeck — Silicon Valley Minimalist × Afro-Nordic Executive
    Design System v2
    ═══════════════════════════════════════════════════════════════════ */
 :root {
@@ -824,4 +824,4 @@ html.dark .watermark-overlay{
 .slide-card svg{
   pointer-events:none;
 }
-/* End of Udo-Deck CSS */
+/* End of UdoDeck CSS */

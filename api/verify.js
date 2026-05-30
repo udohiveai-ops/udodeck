@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   const { reference } = req.body;
 
-  if (!reference || typeof reference !== 'string' || !reference.startsWith('udara_')) {
+  if (!reference || typeof reference !== 'string' || !reference.startsWith('UdoDeck_')) {
     return res.status(400).json({ verified: false, error: 'Invalid reference' });
   }
 
@@ -41,11 +41,11 @@ export default async function handler(req, res) {
     if (tx.amount   !== EXPECTED_AMOUNT_KOBO) return res.status(200).json({ verified: false, error: 'Amount mismatch' });
     if (tx.currency !== EXPECTED_CURRENCY)    return res.status(200).json({ verified: false, error: 'Currency mismatch' });
 
-    console.log('[Udara] Payment verified:', reference);
+    console.log('[UdoDeck] Payment verified:', reference);
     return res.status(200).json({ verified: true, reference: tx.reference, paidAt: tx.paid_at });
 
   } catch (err) {
-    console.error('[Udara] Verify error:', err.message);
+    console.error('[UdoDeck] Verify error:', err.message);
     return res.status(500).json({ verified: false, error: 'Request failed' });
   }
 }
