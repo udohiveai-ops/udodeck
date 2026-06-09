@@ -118,7 +118,7 @@ let includeImgPh         = false;
 let animationsEnabled    = false;
 let varyLayouts          = true;
 let uploadedDocText      = '';
-let isUnlocked           = false;   /* true after successful payment — removes watermarks */
+let isUnlocked           = false;   /* unlocked after successful payment */
 let paymentInProgress    = false;   /* prevents double-click on pay button */
 
 /* ── DOM refs — resolved inside DOMContentLoaded so they're never null ── */
@@ -322,8 +322,7 @@ function restoreFromStorage(){
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   GENERATE — calls /api/generate (Gemini), falls back to mock if API
-   is not yet configured (so the app still works during development)
+   GENERATE — calls /api/generate (Gemini) and requires AI-generated slide content.
    ═══════════════════════════════════════════════════════════════════════ */
 async function handleGenerate(){
   const topic    = topicInput.value.trim();
@@ -368,38 +367,19 @@ async function handleGenerate(){
       setProgress(70); setProgressLabel('Processing slides…');
 
       if (!response.ok) {
-        /* Read error body so we can log it, then fall through to mock */
         const errData = await response.json().catch(() => ({}));
         console.warn('[UdoDeck] API returned', response.status, errData);
-        /* If it's a config error (500 = key not set), fall back to mock */
-        /* If it's a genuine server error, throw so user knows           */
-        if (response.status === 400) {
-          throw new Error(errData.error || 'Invalid request');
-        }
-        /* 500/502 = API not configured or Gemini down → use mock */
-        console.warn('[UdoDeck] Falling back to mock generator');
-        slides = uploadedDocText
-          ? generateDocSlides(currentTopic, audience, count, uploadedDocText)
-          : generateMockSlides(currentTopic, audience, count);
-      } else {
-        slides = await response.json();
-        /* Validate response is a proper slides array */
-        if (!Array.isArray(slides) || slides.length < 3) {
-          throw new Error('Invalid response from AI — not a slides array');
-        }
+        throw new Error(errData.error || `AI generation failed (${response.status})`);
+      }
+
+      slides = await response.json();
+      /* Validate response is a proper slides array */
+      if (!Array.isArray(slides) || slides.length < 3) {
+        throw new Error('Invalid response from AI — not a slides array');
       }
 
     } catch (apiErr) {
-      /* Network error (offline, CORS, etc.) — fall back to mock silently */
-      if (apiErr.name === 'TypeError' && apiErr.message.includes('fetch')) {
-        console.warn('[UdoDeck] Network error, using mock generator:', apiErr.message);
-        slides = uploadedDocText
-          ? generateDocSlides(currentTopic, audience, count, uploadedDocText)
-          : generateMockSlides(currentTopic, audience, count);
-      } else {
-        /* Real error (bad input, etc.) — surface it to user */
-        throw apiErr;
-      }
+      throw apiErr;
     }
 
     setProgress(90); setProgressLabel('Rendering your slides…');
