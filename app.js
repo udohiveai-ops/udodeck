@@ -30,7 +30,7 @@ function updateThemeToggleLabel(isDark){
 const LS = {
   slides:'udara_slides_v1', topic:'udara_topic_v1', audience:'udara_aud_v1',
   theme:'udara_theme_v1', layoutTheme:'udara_ltheme_v1', imgPh:'udara_imgph_v1',
-  anim:'udara_anim_v1', count:'udara_count_v1', vary:'udara_vary_v1'
+  anim:'udara_anim_v1', count:'udara_count_v1', vary:'udara_vary_v1', paid:'udara_paid_v1'
 };
 const PAYSTACK_PK   = 'pk_test_placeholder_key';
 const PAYSTACK_EMAIL= 'guest@udara.app';
@@ -301,6 +301,7 @@ function restoreFromStorage(){
     const savedVary = localStorage.getItem(LS.vary);
     if(savedVary==='false'){ varyLayouts=false; $('vary-toggle-switch').classList.remove('on'); }
 
+    const paid = localStorage.getItem(LS.paid);
     if(saved){
       currentSlides   = JSON.parse(saved);
       currentTopic = localStorage.getItem(LS.topic)||'';
@@ -313,7 +314,14 @@ function restoreFromStorage(){
       previewSection.style.display = 'block';
       renderSlides(currentSlides, false);
 
-      showToast('↩ Your previous slides have been restored');
+      if(paid === 'true'){
+        isUnlocked = true;
+        removeWatermarks();
+        successBanner.style.display = 'block';
+        showToast('↩ Your previous paid slides are still unlocked');
+      } else {
+        showToast('↩ Your previous slides have been restored');
+      }
     }
   } catch(e){
     localStorage.removeItem(LS.slides);
@@ -340,6 +348,12 @@ async function handleGenerate(){
   currentAudience    = 'startup';
   currentLayoutTheme = lt;
   currentCount       = count;
+
+  /* Reset paid/unlocked state when generating new slides */
+  isUnlocked = false;
+  localStorage.removeItem(LS.paid);
+  successBanner.style.display = 'none';
+  exportBar.style.display = 'block';
 
   setLoading(true, 'Generating your slides…');
   setProgress(10);
@@ -1725,7 +1739,10 @@ function onPaymentSuccess(reference){
 
   /* Update UI */
   successBanner.style.display = 'block';
-  exportBar.style.display = 'none';
+  exportBar.style.display = 'block';
+
+  /* Persist paid state across refresh until next generation */
+  localStorage.setItem(LS.paid, 'true');
 
   /* Store the reference so the user can quote it for support */
   localStorage.setItem('udara_last_ref', reference || '');
