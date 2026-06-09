@@ -4,7 +4,7 @@
  * Then uncomment the verification block in app.js handlePayment().
  */
 
-const EXPECTED_AMOUNT_KOBO = 100000; // ₦1,000
+const EXPECTED_AMOUNT_KOBO = 200000; // ₦2,000
 const EXPECTED_CURRENCY    = 'NGN';
 
 export default async function handler(req, res) {

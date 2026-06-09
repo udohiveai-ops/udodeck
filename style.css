@@ -39,7 +39,7 @@
   --r-xl:  26px;
 
   /* Fonts */
-  --ff-display: 'Instrument Serif', Georgia, serif;
+  --ff-display: 'Inter', 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
   --ff-ui:      'Inter Tight', 'Inter', sans-serif;
   --ff-body:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 

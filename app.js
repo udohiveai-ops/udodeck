@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════
-   Udara — AI Slide Generator
+   UdoDeck — AI Slide Generator
    ═══════════════════════════════════════════════════════════════════════ */
 
 /* ── Dark mode — runs immediately (before DOMContentLoaded) so there's
@@ -34,40 +34,77 @@ const LS = {
 };
 const PAYSTACK_PK   = 'pk_test_placeholder_key';
 const PAYSTACK_EMAIL= 'guest@udara.app';
-const AMOUNT_KOBO   = 100000;
+const AMOUNT_KOBO   = 200000;
 
 /* ── Colour themes — African-inspired palette ─────────────────────────── */
 const COLOUR_THEMES = [
-  // Savanna — default: deep brown + terracotta + kente gold
-  {id:'savanna',  label:'Savanna',       sw:'linear-gradient(135deg,#1a0e04,#e8631a)', bg:'120800', p:'1e1006', a1:'e8631a', a2:'f5b800', tx:'f5ede0', mu:'a8937a'},
-  // Midnight Kente — rich black + electric kente colours
-  {id:'kente',    label:'Kente Night',   sw:'linear-gradient(135deg,#0a0a0a,#f5b800)', bg:'0a0a06', p:'141208', a1:'f5b800', a2:'3d9e5f', tx:'f5f0e0', mu:'8a7a60'},
-  // Lagos Dusk — deep navy-purple + amber
-  {id:'lagos',    label:'Lagos Dusk',    sw:'linear-gradient(135deg,#0a0820,#f5b800)', bg:'0a0820', p:'12102e', a1:'f5b800', a2:'e8631a', tx:'eeeaf8', mu:'706888'},
-  // Sahara — warm sand + burnt sienna
-  {id:'sahara',   label:'Sahara',        sw:'linear-gradient(135deg,#1c1208,#c94f10)', bg:'1c1208', p:'2a1c0c', a1:'c94f10', a2:'f5b800', tx:'f8ede0', mu:'9a7858'},
-  // Forest — deep jungle green + gold
-  {id:'forest',   label:'Forest',        sw:'linear-gradient(135deg,#061810,#3d9e5f)', bg:'061810', p:'0e2418', a1:'3d9e5f', a2:'f5b800', tx:'e0f0e8', mu:'507858'},
-  // Abuja Clay — rich clay red + cream
-  {id:'clay',     label:'Abuja Clay',    sw:'linear-gradient(135deg,#1e0c08,#c0392b)', bg:'1e0c08', p:'2c1410', a1:'c0392b', a2:'f5b800', tx:'f8e8e0', mu:'a07068'},
-  // Ocean — deep blue + mint, coast of West Africa
-  {id:'ocean',    label:'Atlantic',      sw:'linear-gradient(135deg,#040e1c,#1abc9c)', bg:'040e1c', p:'081828', a1:'1abc9c', a2:'f5b800', tx:'e0eef8', mu:'487090'},
-  // Light — parchment + dark ink, like old documents
-  {id:'parchment',label:'Parchment',     sw:'linear-gradient(135deg,#f5ede0,#1a0e04)', bg:'f5ede0', p:'ede0cc', a1:'1a0e04', a2:'c94f10', tx:'1a0e04', mu:'6a5040'},
+  {id:'savanna',    label:'Savanna',        sw:'linear-gradient(135deg,#1a0e04,#e8631a)', bg:'120800', p:'1e1006', a1:'e8631a', a2:'f5b800', tx:'f5ede0', mu:'a8937a'},
+  {id:'kente',      label:'Kente Night',    sw:'linear-gradient(135deg,#0a0a0a,#f5b800)', bg:'0a0a06', p:'141208', a1:'f5b800', a2:'3d9e5f', tx:'f5f0e0', mu:'8a7a60'},
+  {id:'lagos',      label:'Lagos Dusk',     sw:'linear-gradient(135deg,#0a0820,#f5b800)', bg:'0a0820', p:'12102e', a1:'f5b800', a2:'e8631a', tx:'eeeaf8', mu:'706888'},
+  {id:'sahara',     label:'Sahara',         sw:'linear-gradient(135deg,#3d1d07,#f5ba47)', bg:'1c1208', p:'2a190c', a1:'f5ba47', a2:'d37926', tx:'f9eee2', mu:'9b7a5e'},
+  {id:'forest',     label:'Forest',         sw:'linear-gradient(135deg,#061810,#3d9e5f)', bg:'061810', p:'0e2418', a1:'3d9e5f', a2:'f5b800', tx:'e0f0e8', mu:'507858'},
+  {id:'clay',       label:'Abuja Clay',     sw:'linear-gradient(135deg,#2d0f07,#d3532d)', bg:'210e09', p:'2f140c', a1:'d3532d', a2:'f8b78f', tx:'f9ece4', mu:'a07366'},
+  {id:'ocean',      label:'Atlantic',       sw:'linear-gradient(135deg,#040e1c,#1abc9c)', bg:'043a4c', p:'081828', a1:'1abc9c', a2:'f5b800', tx:'e0eef8', mu:'487090'},
+  {id:'parchment',  label:'Parchment',      sw:'linear-gradient(135deg,#f5ede0,#1a0e04)', bg:'f5ede0', p:'ede0cc', a1:'1a0e04', a2:'c94f10', tx:'1a0e04', mu:'6a5040'},
+  {id:'sunrise',    label:'Sunrise',        sw:'linear-gradient(135deg,#ff8a00,#f78f5f)', bg:'2d1000', p:'2b1400', a1:'ff8a00', a2:'ffd35f', tx:'fff3e2', mu:'b0795d'},
+  {id:'midnight',   label:'Midnight Pulse', sw:'linear-gradient(135deg,#120a2f,#6b3bff)', bg:'100a28', p:'130c2a', a1:'6b3bff', a2:'3f8cff', tx:'e8e8ff', mu:'7c7dbf'},
+  {id:'mango',      label:'Mango Grove',    sw:'linear-gradient(135deg,#ffbf3f,#ff5a76)', bg:'230c02', p:'2a1006', a1:'ffbf3f', a2:'ff5a76', tx:'fff1f0', mu:'c37f68'},
+  {id:'cobalt',     label:'Cobalt',         sw:'linear-gradient(135deg,#09203f,#537895)', bg:'06101f', p:'0f192f', a1:'537895', a2:'8ad7ff', tx:'e8f4ff', mu:'6b889f'},
+  {id:'ember',      label:'Ember',          sw:'linear-gradient(135deg,#4d0505,#f76040)', bg:'28070e', p:'240b0b', a1:'f76040', a2:'ffb347', tx:'f9e8dc', mu:'b26d55'},
+  {id:'sage',       label:'Sage',           sw:'linear-gradient(135deg,#1a3b2f,#b7d8c3)', bg:'0d1f19', p:'13261e', a1:'7cbfa6', a2:'d9efdb', tx:'e9f5ee', mu:'7a9987'},
+  {id:'pearl',      label:'Pearl',          sw:'linear-gradient(135deg,#f7f1e2,#d3c8b4)', bg:'efede8', p:'dcd5c8', a1:'8e7c5d', a2:'c4b497', tx:'1d160c', mu:'7a6d5d'},
+  {id:'jewel',      label:'Jewel',          sw:'linear-gradient(135deg,#240c3b,#8131d0)', bg:'0b0815', p:'120f1f', a1:'8131d0', a2:'f4a4ff', tx:'f0e8ff', mu:'8a72a7'},
+  {id:'steel',      label:'Steel',          sw:'linear-gradient(135deg,#1d2938,#6b8797)', bg:'0b141d', p:'131d27', a1:'6b8797', a2:'cadce4', tx:'e8f1f6', mu:'8c9ea8'},
+  {id:'sand',       label:'Sandstone',      sw:'linear-gradient(135deg,#2c1605,#c18e56)', bg:'211909', p:'2c190d', a1:'c18e56', a2:'f0b866', tx:'f6e7cf', mu:'9c7c58'},
+  {id:'plum',       label:'Plum',           sw:'linear-gradient(135deg,#2f0926,#9e3f97)', bg:'170c23', p:'1f0d1f', a1:'9e3f97', a2:'f4b8ff', tx:'f1e7f5', mu:'8e6e91'},
+  {id:'bloom',      label:'Bloom',          sw:'linear-gradient(135deg,#432b14,#ffb66f)', bg:'1f0a14', p:'2f1b0c', a1:'ffb66f', a2:'ff4077', tx:'fff0e7', mu:'a66d5d'},
+
+  /* 30 additional palettes */
+  {id:'moraine',    label:'Moraine',        sw:'linear-gradient(135deg,#0b3d2e,#2db29b)', bg:'064b3c', p:'071e1a', a1:'2db29b', a2:'9be7d4', tx:'e8fbf6', mu:'6b8f82'},
+  {id:'cerulean',  label:'Cerulean',       sw:'linear-gradient(135deg,#073b4c,#4fb5ff)', bg:'042a33', p:'08161a', a1:'4fb5ff', a2:'9be0ff', tx:'e8f8ff', mu:'6a8b99'},
+  {id:'verdant',   label:'Verdant',        sw:'linear-gradient(135deg,#083018,#2fa463)', bg:'032d14', p:'07160e', a1:'2fa463', a2:'b7f0cf', tx:'eaf9ef', mu:'609b77'},
+  {id:'ochre',     label:'Ochre',          sw:'linear-gradient(135deg,#4b2b00,#ffb74d)', bg:'1f1301', p:'241507', a1:'ffb74d', a2:'ffdba3', tx:'fff7e9', mu:'a07a4f'},
+  {id:'rosewood',  label:'Rosewood',       sw:'linear-gradient(135deg,#3a0811,#d34c6b)', bg:'2c0610', p:'1c0710', a1:'d34c6b', a2:'ff9ab2', tx:'fff0f4', mu:'8d5e6c'},
+  {id:'graphite',  label:'Graphite',       sw:'linear-gradient(135deg,#0b0f14,#6b7280)', bg:'07090c', p:'0e1114', a1:'6b7280', a2:'aab3bd', tx:'eef3f6', mu:'66707a'},
+  {id:'marigold',  label:'Marigold',       sw:'linear-gradient(135deg,#4a2600,#ffb84d)', bg:'1d0d00', p:'2a1400', a1:'ffb84d', a2:'ffd686', tx:'fff6e8', mu:'b07a45'},
+  {id:'birch',     label:'Birch',          sw:'linear-gradient(135deg,#f6f3ea,#2b3b2a)', bg:'f4f2ea', p:'ede8d6', a1:'2b3b2a', a2:'7aa77c', tx:'14200f', mu:'8a9b86'},
+  {id:'onyx',      label:'Onyx',           sw:'linear-gradient(135deg,#000000,#3a3a3a)', bg:'040404', p:'0a0a0a', a1:'3a3a3a', a2:'8c8c8c', tx:'f3f3f3', mu:'6b6b6b'},
+  {id:'lapis',     label:'Lapis',          sw:'linear-gradient(135deg,#0b2240,#2f61b6)', bg:'07122a', p:'0b1a33', a1:'2f61b6', a2:'89b7ff', tx:'e9f0ff', mu:'6f88b0'},
+  {id:'terracotta',label:'Terracotta',     sw:'linear-gradient(135deg,#3e1508,#ff7043)', bg:'270f0b', p:'27100b', a1:'ff7043', a2:'ffd1be', tx:'fff0ea', mu:'a36857'},
+  {id:'butter',    label:'Butter',         sw:'linear-gradient(135deg,#fff4c2,#ffb74d)', bg:'fff8e6', p:'f7efd1', a1:'ffb74d', a2:'ffd58a', tx:'2d2200', mu:'bda76a'},
+  {id:'olive',     label:'Olive',          sw:'linear-gradient(135deg,#101d0d,#9cbf5a)', bg:'08130a', p:'0c1b0d', a1:'9cbf5a', a2:'dff0b3', tx:'f3f8ea', mu:'7f915f'},
+  {id:'orchid',    label:'Orchid',         sw:'linear-gradient(135deg,#2b0b2f,#d28bff)', bg:'120616', p:'1b0b20', a1:'d28bff', a2:'ffc8ff', tx:'fbf0ff', mu:'8f6f97'},
+  {id:'tide',      label:'Tide',           sw:'linear-gradient(135deg,#06273a,#4dd0e1)', bg:'041827', p:'061624', a1:'4dd0e1', a2:'bff5fb', tx:'e8fbff', mu:'6aaeb6'},
+  {id:'smoke',     label:'Smoke',          sw:'linear-gradient(135deg,#1b1f23,#9aa3a8)', bg:'0b0d0f', p:'101215', a1:'9aa3a8', a2:'dce4e7', tx:'f3f6f7', mu:'7b8589'},
+  {id:'corsair',   label:'Corsair',        sw:'linear-gradient(135deg,#04121c,#2b5876)', bg:'04121a', p:'07111a', a1:'2b5876', a2:'86b0cf', tx:'e8f3fa', mu:'6a8a9b'},
+  {id:'carmine',   label:'Carmine',        sw:'linear-gradient(135deg,#2a0306,#ff5a6a)', bg:'120306', p:'1e0508', a1:'ff5a6a', a2:'ffb7bf', tx:'fff0f2', mu:'8f5a61'},
+  {id:'zinnia',    label:'Zinnia',         sw:'linear-gradient(135deg,#3b0f09,#ff6f61)', bg:'1f0505', p:'2a0d08', a1:'ff6f61', a2:'ffd0c8', tx:'fff3f1', mu:'b06a5b'},
+  {id:'emberlight',label:'Ember Light',    sw:'linear-gradient(135deg,#2a0d08,#ffbc7d)', bg:'2b0f0d', p:'2c110b', a1:'ffbc7d', a2:'ffe4c8', tx:'fff5ee', mu:'b0896d'},
+  {id:'seafoam',   label:'Seafoam',        sw:'linear-gradient(135deg,#0b3f3f,#8ff0dd)', bg:'053a39', p:'071a1a', a1:'8ff0dd', a2:'d8fff3', tx:'eafffb', mu:'6aa89b'},
+  {id:'garnet',    label:'Garnet',         sw:'linear-gradient(135deg,#2b0306,#b3202a)', bg:'1f050e', p:'1b0507', a1:'b3202a', a2:'ff9a9f', tx:'fff0f1', mu:'7a3b3f'},
+  {id:'sunbeam',   label:'Sunbeam',        sw:'linear-gradient(135deg,#ffdd66,#ff9a00)', bg:'fff6e0', p:'fff0d6', a1:'ff9a00', a2:'ffd96a', tx:'211200', mu:'b08a46'},
+  {id:'mist',      label:'Mist',           sw:'linear-gradient(135deg,#f3f7f9,#cfe0ea)', bg:'f7fbfd', p:'eef6f9', a1:'cfe0ea', a2:'eaf6fb', tx:'071826', mu:'9ab0c1'},
+  {id:'copper',    label:'Copper',         sw:'linear-gradient(135deg,#3d0d05,#ff9458)', bg:'240a0d', p:'2b110c', a1:'ff9458', a2:'ffd8b5', tx:'fff3ec', mu:'b6876a'},
+  {id:'pebble',    label:'Pebble',         sw:'linear-gradient(135deg,#ececec,#9da5a8)', bg:'f6f7f7', p:'ededed', a1:'9da5a8', a2:'cfd6d8', tx:'121617', mu:'9aa0a3'},
+  {id:'ivory',     label:'Ivory',          sw:'linear-gradient(135deg,#fffdf6,#efe7d6)', bg:'fffcf3', p:'fff6e8', a1:'efe7d6', a2:'f9efe0', tx:'201a12', mu:'bfb19a'},
+  {id:'tealcrest', label:'Teal Crest',     sw:'linear-gradient(135deg,#023a36,#45c0b1)', bg:'042826', p:'071a19', a1:'45c0b1', a2:'bff2e7', tx:'e8fffa', mu:'5fa79a'},
+  {id:'orchard',   label:'Orchard',        sw:'linear-gradient(135deg,#13300a,#a6d96a)', bg:'081806', p:'0b1209', a1:'a6d96a', a2:'dff7bd', tx:'f2fff0', mu:'779b63'},
+  {id:'midday',    label:'Midday',         sw:'linear-gradient(135deg,#191a3d,#878bf3)', bg:'09143f', p:'071427', a1:'878bf3', a2:'c3d1ff', tx:'e9ecff', mu:'6e79a5'},
 ];
 
 /* ── Layout themes — visual identity per deck style ──────────────────── */
 const LAYOUT_THEMES = {
-  corporate:   {font:'Arial',        headSize:30, bodySize:13, style:'clean',     label:'Corporate'},
-  school:      {font:'Arial',        headSize:28, bodySize:13, style:'friendly',  label:'School'},
-  bold:        {font:'Arial Black',  headSize:36, bodySize:13, style:'bold',      label:'Bold'},
-  futuristic:  {font:'Arial',        headSize:28, bodySize:12, style:'futuristic',label:'Futuristic'},
-  minimalist:  {font:'Arial',        headSize:26, bodySize:13, style:'minimal',   label:'Minimalist'},
-  creative:    {font:'Arial',        headSize:30, bodySize:13, style:'creative',  label:'Creative Studio'},
-  elegant:     {font:'Arial',        headSize:28, bodySize:12, style:'elegant',   label:'Elegant / Luxury'},
-  tech:        {font:'Arial',        headSize:26, bodySize:12, style:'tech',      label:'Tech / SaaS'},
-  vintage:     {font:'Arial',        headSize:28, bodySize:12, style:'vintage',   label:'Vintage / Retro'},
-  vibrant:     {font:'Arial',        headSize:32, bodySize:13, style:'vibrant',   label:'Vibrant / Pop'},
+  // All themes use Inter for a clean, startup-friendly sans look
+  corporate:   {font:'Inter',        headSize:36, bodySize:14, style:'clean',      label:'Investor Pitch'},
+  school:      {font:'Inter',        headSize:30, bodySize:14, style:'friendly',   label:'Founder Story'},
+  bold:        {font:'Inter',        headSize:40, bodySize:14, style:'bold',       label:'Bold Vision'},
+  futuristic:  {font:'Inter',        headSize:30, bodySize:13, style:'futuristic', label:'Future-Ready'},
+  minimalist:  {font:'Inter',        headSize:28, bodySize:14, style:'minimal',    label:'Lean Startup'},
+  creative:    {font:'Inter',        headSize:34, bodySize:14, style:'creative',   label:'Creative Pitch'},
+  elegant:     {font:'Inter',        headSize:30, bodySize:13, style:'elegant',    label:'Trusted Brand'},
+  tech:        {font:'Inter',        headSize:28, bodySize:13, style:'tech',       label:'Tech Venture'},
+  vintage:     {font:'Inter',        headSize:30, bodySize:13, style:'vintage',    label:'Market Story'},
+  vibrant:     {font:'Inter',        headSize:34, bodySize:14, style:'vibrant',    label:'Launch Surge'},
 };
 
 /* ── State ────────────────────────────────────────────────────────────── */
@@ -86,7 +123,7 @@ let paymentInProgress    = false;   /* prevents double-click on pay button */
 
 /* ── DOM refs — resolved inside DOMContentLoaded so they're never null ── */
 let $;
-let topicInput, audienceSelect, ltSelect, slideCountEl, slideCountVal,
+let topicInput, ltSelect, slideCountEl, slideCountVal,
     slideCountDisp, slideCountBadge, generateBtn, progressWrap, progressBar,
     progressLabel, previewSection, slideGrid, exportBar, successBanner,
     toast, uploadZone, docUpload, uploadFileName;
@@ -99,7 +136,6 @@ document.addEventListener('DOMContentLoaded', function () {
   /* Resolve all DOM references now that the document is fully parsed */
   $ = id => document.getElementById(id);
   topicInput     = $('topic-input');
-  audienceSelect = $('audience-select');
   ltSelect       = $('layout-theme-select');
   slideCountEl   = $('slide-count');
   slideCountVal  = $('slide-count-val');
@@ -267,12 +303,10 @@ function restoreFromStorage(){
 
     if(saved){
       currentSlides   = JSON.parse(saved);
-      currentTopic    = localStorage.getItem(LS.topic)||'';
-      currentAudience = localStorage.getItem(LS.audience)||'startup';
+      currentTopic = localStorage.getItem(LS.topic)||'';
 
       /* Restore form fields */
-      topicInput.value     = currentTopic;
-      audienceSelect.value = currentAudience;
+      topicInput.value = currentTopic;
 
       /* Render the saved slides immediately — no scroll on restore */
       slideCountBadge.textContent = currentSlides.length+' slides ready';
@@ -283,7 +317,7 @@ function restoreFromStorage(){
     }
   } catch(e){
     localStorage.removeItem(LS.slides);
-    console.warn('[Udara] Could not restore localStorage:', e);
+    console.warn('[UdoDeck] Could not restore localStorage:', e);
   }
 }
 
@@ -293,7 +327,7 @@ function restoreFromStorage(){
    ═══════════════════════════════════════════════════════════════════════ */
 async function handleGenerate(){
   const topic    = topicInput.value.trim();
-  const audience = audienceSelect.value;
+  const audience = 'startup';
   const lt       = ltSelect.value;
   const count    = +slideCountEl.value;
 
@@ -304,7 +338,7 @@ async function handleGenerate(){
   }
 
   currentTopic       = topic || uploadedDocText.split('\n')[0].slice(0,60).trim() || 'Presentation';
-  currentAudience    = audience;
+  currentAudience    = 'startup';
   currentLayoutTheme = lt;
   currentCount       = count;
 
@@ -324,7 +358,7 @@ async function handleGenerate(){
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           topic:       currentTopic,
-          audience:    currentAudience,
+          audience:    'startup',
           layoutTheme: lt,
           count:       count,
           docText:     uploadedDocText
@@ -336,14 +370,14 @@ async function handleGenerate(){
       if (!response.ok) {
         /* Read error body so we can log it, then fall through to mock */
         const errData = await response.json().catch(() => ({}));
-        console.warn('[Udara] API returned', response.status, errData);
+        console.warn('[UdoDeck] API returned', response.status, errData);
         /* If it's a config error (500 = key not set), fall back to mock */
         /* If it's a genuine server error, throw so user knows           */
         if (response.status === 400) {
           throw new Error(errData.error || 'Invalid request');
         }
         /* 500/502 = API not configured or Gemini down → use mock */
-        console.warn('[Udara] Falling back to mock generator');
+        console.warn('[UdoDeck] Falling back to mock generator');
         slides = uploadedDocText
           ? generateDocSlides(currentTopic, audience, count, uploadedDocText)
           : generateMockSlides(currentTopic, audience, count);
@@ -358,7 +392,7 @@ async function handleGenerate(){
     } catch (apiErr) {
       /* Network error (offline, CORS, etc.) — fall back to mock silently */
       if (apiErr.name === 'TypeError' && apiErr.message.includes('fetch')) {
-        console.warn('[Udara] Network error, using mock generator:', apiErr.message);
+        console.warn('[UdoDeck] Network error, using mock generator:', apiErr.message);
         slides = uploadedDocText
           ? generateDocSlides(currentTopic, audience, count, uploadedDocText)
           : generateMockSlides(currentTopic, audience, count);
@@ -374,7 +408,6 @@ async function handleGenerate(){
     /* ── Save everything to localStorage ─────────────────────────── */
     localStorage.setItem(LS.slides,      JSON.stringify(slides));
     localStorage.setItem(LS.topic,       currentTopic);
-    localStorage.setItem(LS.audience,    audience);
     localStorage.setItem(LS.theme,       currentColourThemeId);
     localStorage.setItem(LS.layoutTheme, lt);
     localStorage.setItem(LS.imgPh,       String(includeImgPh));
@@ -391,7 +424,7 @@ async function handleGenerate(){
     setLoading(false);
 
   } catch(err){
-    console.error('[Udara] Generation error:', err);
+    console.error('[UdoDeck] Generation error:', err);
     showToast('❌ ' + (err.message || 'Something went wrong. Please try again.'));
     setLoading(false);
   }
@@ -634,9 +667,9 @@ function buildWatermarkOverlay(idx){
   overlay.className = 'watermark-overlay';
   overlay.setAttribute('aria-hidden','true');
 
-  /* Diagonal "UDARA PREVIEW" text — repeated in a grid pattern using SVG */
+  /* Diagonal "UDODECK PREVIEW" text — repeated in a grid pattern using SVG */
   const W = 800, H = 450;
-  const label = 'UDARA PREVIEW';
+  const label = 'UDODECK PREVIEW';
   const repeat = 6;        /* how many diagonal rows of text */
   const gap    = 90;       /* vertical gap between rows      */
 
@@ -661,7 +694,7 @@ function buildWatermarkOverlay(idx){
     }
   }
 
-  /* Udara logo mark — centre watermark */
+  /* UdoDeck logo mark — centre watermark */
   const centreWm = `
     <g transform="translate(${W/2-22},${H/2-22})" pointer-events="none" opacity="0.12">
       <circle cx="22" cy="22" r="20" fill="none" stroke="#0F291E" stroke-width="2"/>
@@ -736,16 +769,15 @@ function bgDecor(C, LT, idx){
   const seed = idx % 3; // slight variation per slide within same theme
 
   if(s==='clean'||s==='corporate'){
+    // Cleaner, more spacious corporate background: fewer lines, larger soft shapes
     return `
-      <rect x="0" y="0" width="6" height="${H}" fill="#${C.a1}" fill-opacity="0.9"/>
-      <rect x="6" y="0" width="200" height="${H}" fill="#${C.a1}" fill-opacity="0.04"/>
-      <line x1="206" y1="0" x2="206" y2="${H}" stroke="#${C.a1}" stroke-width="0.5" stroke-opacity="0.2"/>
-      <rect x="0" y="${H-5}" width="${W}" height="5" fill="#${C.a1}" fill-opacity="0.5"/>
-      <circle cx="${W-80}" cy="${H*0.5}" r="140" fill="none" stroke="#${C.a2}" stroke-width="0.5" stroke-opacity="0.1"/>
-      <circle cx="${W-80}" cy="${H*0.5}" r="90" fill="#${C.a2}" fill-opacity="0.03"/>
-      ${seed===0?`<line x1="${W-200}" y1="0" x2="${W}" y2="${H}" stroke="#${C.a1}" stroke-width="0.3" stroke-opacity="0.08"/>`:
-        seed===1?`<rect x="${W-120}" y="30" width="80" height="80" rx="6" fill="none" stroke="#${C.a1}" stroke-width="0.5" stroke-opacity="0.1"/>`:
-        `<polygon points="${W},0 ${W-80},0 ${W},80" fill="#${C.a1}" fill-opacity="0.06"/>`}`;
+      <rect x="0" y="0" width="10" height="${H}" fill="#${C.a1}" fill-opacity="0.08"/>
+      <rect x="48" y="0" width="${W-48}" height="${H}" fill="none"/>
+      <circle cx="${W-140}" cy="${H*0.45}" r="180" fill="none" stroke="#${C.a2}" stroke-width="0.6" stroke-opacity="0.06"/>
+      <circle cx="${W-140}" cy="${H*0.45}" r="110" fill="#${C.a2}" fill-opacity="0.03"/>
+      ${seed===0?`<line x1="${W-220}" y1="0" x2="${W}" y2="${H}" stroke="#${C.a1}" stroke-width="0.25" stroke-opacity="0.05"/>`:
+        seed===1?`<rect x="${W-160}" y="40" width="100" height="100" rx="8" fill="none" stroke="#${C.a1}" stroke-width="0.35" stroke-opacity="0.06"/>`:
+        `<polygon points="${W},0 ${W-60},0 ${W},60" fill="#${C.a1}" fill-opacity="0.04"/>`}`;
   }
 
   if(s==='bold'){
@@ -762,28 +794,26 @@ function bgDecor(C, LT, idx){
   }
 
   if(s==='futuristic'){
-    const diagonals = Array.from({length:10},(_,k)=>`<line x1="${k*90}" y1="0" x2="${k*90+70}" y2="${H}" stroke="#${C.a1}" stroke-width="0.4" stroke-opacity="${0.06+k*0.005}"/>`).join('');
+    // Softer futuristic: fewer diagonal lines, larger central orbit for spacious feel
+    const diagonals = Array.from({length:6},(_,k)=>`<line x1="${k*120}" y1="0" x2="${k*120+90}" y2="${H}" stroke="#${C.a1}" stroke-width="0.35" stroke-opacity="${0.045+k*0.004}"/>`).join('');
     return `
       ${diagonals}
-      <circle cx="${W*0.72}" cy="${H*0.38}" r="150" fill="none" stroke="#${C.a1}" stroke-width="1.5" stroke-opacity="0.12"/>
-      <circle cx="${W*0.72}" cy="${H*0.38}" r="95"  fill="none" stroke="#${C.a2}" stroke-width="1"   stroke-opacity="0.10"/>
-      <circle cx="${W*0.72}" cy="${H*0.38}" r="45"  fill="#${C.a1}" fill-opacity="0.05"/>
-      <circle cx="${W*0.72}" cy="${H*0.38}" r="8"   fill="#${C.a1}" fill-opacity="0.4"/>
-      <rect x="0" y="0" width="${W}" height="3" fill="#${C.a1}" fill-opacity="0.6"/>
-      ${Array.from({length:5},(_,k)=>`<circle cx="${120+k*130}" cy="${H-20}" r="2" fill="#${C.a2}" fill-opacity="${0.2+k*0.08}"/>`).join('')}
-      ${seed===1?`<polygon points="${W*0.72},${H*0.38-150} ${W*0.72+10},${H*0.38-130} ${W*0.72-10},${H*0.38-130}" fill="#${C.a1}" fill-opacity="0.3"/>`:
-        seed===2?`<line x1="${W*0.72-150}" y1="${H*0.38}" x2="${W*0.72+150}" y2="${H*0.38}" stroke="#${C.a1}" stroke-width="0.5" stroke-opacity="0.15"/>`:
-        `<rect x="${W*0.72-4}" y="${H*0.38-150}" width="8" height="300" fill="#${C.a1}" fill-opacity="0.05"/>`}`;
+      <circle cx="${W*0.72}" cy="${H*0.4}" r="200" fill="none" stroke="#${C.a1}" stroke-width="1" stroke-opacity="0.08"/>
+      <circle cx="${W*0.72}" cy="${H*0.4}" r="110"  fill="none" stroke="#${C.a2}" stroke-width="0.9" stroke-opacity="0.08"/>
+      <circle cx="${W*0.72}" cy="${H*0.4}" r="50"  fill="#${C.a1}" fill-opacity="0.04"/>
+      ${seed===1?`<polygon points="${W*0.72},${H*0.4-160} ${W*0.72+18},${H*0.4-140} ${W*0.72-18},${H*0.4-140}" fill="#${C.a1}" fill-opacity="0.22"/>`:
+        seed===2?`<line x1="${W*0.72-180}" y1="${H*0.4}" x2="${W*0.72+180}" y2="${H*0.4}" stroke="#${C.a1}" stroke-width="0.45" stroke-opacity="0.12"/>`:
+        `<rect x="${W*0.72-6}" y="${H*0.4-180}" width="12" height="360" fill="#${C.a1}" fill-opacity="0.04"/>`}`;
   }
 
   if(s==='minimal'){
+    // Minimal: emphasize whitespace, tiny accent on left
     return `
-      <rect x="48" y="0" width="2" height="${H}" fill="#${C.a1}" fill-opacity="0.8"/>
-      <rect x="0" y="${H-2}" width="${W}" height="2" fill="#${C.mu}" fill-opacity="0.2"/>
-      <rect x="0" y="0" width="48" height="${H}" fill="#${C.a1}" fill-opacity="0.03"/>
-      ${seed===0?`<circle cx="${W-60}" cy="60" r="50" fill="none" stroke="#${C.a1}" stroke-width="0.5" stroke-opacity="0.15"/>`:
-        seed===1?`<line x1="${W-100}" y1="30" x2="${W-30}" y2="30" stroke="#${C.a1}" stroke-width="1" stroke-opacity="0.2"/>`:
-        `<rect x="${W-80}" y="20" width="50" height="2" fill="#${C.a1}" fill-opacity="0.3"/>`}`;
+      <rect x="56" y="0" width="4" height="${H}" fill="#${C.a1}" fill-opacity="0.06"/>
+      <rect x="0" y="${H-2}" width="${W}" height="2" fill="#${C.mu}" fill-opacity="0.12"/>
+      ${seed===0?`<circle cx="${W-80}" cy="80" r="70" fill="none" stroke="#${C.a1}" stroke-width="0.35" stroke-opacity="0.06"/>`:
+        seed===1?`<line x1="${W-120}" y1="40" x2="${W-40}" y2="40" stroke="#${C.a1}" stroke-width="0.8" stroke-opacity="0.12"/>`:
+        `<rect x="${W-100}" y="30" width="60" height="3" fill="#${C.a1}" fill-opacity="0.12"/>`}`;
   }
 
   if(s==='friendly'||s==='school'){
@@ -801,16 +831,15 @@ function bgDecor(C, LT, idx){
   }
 
   if(s==='creative'){
+    // Creative: large illustrative shapes, spacious composition, muted opacities
     return `
-      <polygon points="0,0 260,0 0,220" fill="#${C.a1}" fill-opacity="0.1"/>
-      <polygon points="${W},${H} ${W-260},${H} ${W},${H-220}" fill="#${C.a2}" fill-opacity="0.08"/>
-      <polygon points="${W},0 ${W-140},0 ${W},140" fill="#${C.a2}" fill-opacity="0.07"/>
-      <polygon points="0,${H} 140,${H} 0,${H-140}" fill="#${C.a1}" fill-opacity="0.06"/>
-      <circle cx="${W/2}" cy="${H/2}" r="200" fill="none" stroke="#${C.a1}" stroke-width="0.5" stroke-opacity="0.08"/>
-      <circle cx="${W/2}" cy="${H/2}" r="130" fill="none" stroke="#${C.a2}" stroke-width="0.3" stroke-opacity="0.06"/>
-      ${seed===0?`<circle cx="260" cy="0" r="8" fill="#${C.a1}" fill-opacity="0.5"/>`:
-        seed===1?`<circle cx="${W}" cy="${H}" r="8" fill="#${C.a2}" fill-opacity="0.5"/>`:
-        `<circle cx="${W}" cy="0" r="6" fill="#${C.a2}" fill-opacity="0.4"/>`}`;
+      <polygon points="0,0 320,0 0,260" fill="#${C.a1}" fill-opacity="0.06"/>
+      <polygon points="${W},${H} ${W-320},${H} ${W},${H-260}" fill="#${C.a2}" fill-opacity="0.05"/>
+      <circle cx="${W/2-80}" cy="${H/2-40}" r="220" fill="none" stroke="#${C.a1}" stroke-width="0.45" stroke-opacity="0.06"/>
+      <circle cx="${W/2+120}" cy="${H/2+20}" r="150" fill="none" stroke="#${C.a2}" stroke-width="0.35" stroke-opacity="0.05"/>
+      ${seed===0?`<circle cx="200" cy="40" r="10" fill="#${C.a1}" fill-opacity="0.4"/>`:
+        seed===1?`<circle cx="${W-20}" cy="${H-20}" r="10" fill="#${C.a2}" fill-opacity="0.36"/>`:
+        `<circle cx="${W-10}" cy="10" r="8" fill="#${C.a2}" fill-opacity="0.32"/>`}`;
   }
 
   if(s==='elegant'){
@@ -1099,7 +1128,7 @@ function buildTitle(sl,C,LT,defs,bg,decor,num,anim,idx){
   const tags = `
     <rect x="0" y="${tagY}" width="${W}" height="30" fill="#${C.a1}" fill-opacity="${isEleg?0.07:0.1}"/>
     <text x="20" y="${tagY+19}" font-family="Arial" font-size="8" font-weight="700"
-      fill="#${C.a1}" letter-spacing="2">${LT.label.toUpperCase()} · UDARA</text>
+      fill="#${C.a1}" letter-spacing="2">${LT.label.toUpperCase()} · UdoDeck</text>
     <text x="${W-20}" y="${tagY+19}" text-anchor="end" font-family="Arial" font-size="8"
       fill="#${C.mu}" letter-spacing="1">${new Date().getFullYear()}</text>`;
 
@@ -1539,7 +1568,7 @@ function buildClosing(sl,C,LT,defs,bg,decor,num,anim,idx){
   const brand = `
     <text x="${W/2}" y="${H-18}" text-anchor="middle"
       font-family="Arial" font-size="9" font-weight="700"
-      fill="#${C.bg}" letter-spacing="2" fill-opacity="0.8">UDARA · ${LT.label.toUpperCase()}</text>`;
+      fill="#${C.bg}" letter-spacing="2" fill-opacity="0.8">UdoDeck · ${LT.label.toUpperCase()}</text>`;
 
   return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
     ${defs}${bg}${decor}${rings}${rays}${ribbon}${tyText}${accentRule}${sub}${buls}${brand}${num}
@@ -1563,7 +1592,7 @@ function generatePaymentRef(){
     crypto.getRandomValues(new Uint8Array(16)),
     b => b.toString(16).padStart(2,'0')
   ).join('');
-  return `udara_${Date.now()}_${random}`;
+  return `UdoDeck_${Date.now()}_${random}`;
 }
 
 async function handlePayment(){
@@ -1609,14 +1638,14 @@ async function handlePayment(){
         { display_name:'Topic',       variable_name:'topic',       value: currentTopic        },
         { display_name:'Theme',       variable_name:'theme',       value: currentLayoutTheme  },
         { display_name:'Slide Count', variable_name:'slide_count', value: String(currentSlides.length) },
-        { display_name:'App Version', variable_name:'app_version', value: 'udara-v1'          },
+        { display_name:'App Version', variable_name:'app_version', value: 'udodeck-v1'        },
       ]
     },
 
     callback: async function(response){
       /* ── Verify the reference is the one we sent ─────────────────── */
       if(response.reference !== paymentRef){
-        console.warn('[Udara] Reference mismatch — possible replay attack');
+        console.warn('[UdoDeck] Reference mismatch — possible replay attack');
         showToast('❌ Payment reference mismatch. Please contact support.');
         resetPayButton();
         return;
@@ -1624,7 +1653,7 @@ async function handlePayment(){
 
       /* ── Guard: reference must not have been used before ─────────── */
       if(usedReferences.has(response.reference)){
-        console.warn('[Udara] Duplicate reference — replay attempt blocked');
+        console.warn('[UdoDeck] Duplicate reference — replay attempt blocked');
         showToast('❌ This payment has already been processed.');
         resetPayButton();
         return;
@@ -1654,7 +1683,7 @@ async function handlePayment(){
              return;
            }
          } catch(err){
-           console.error('[Udara] Verification error:', err);
+           console.error('[UdoDeck] Verification error:', err);
            showToast('❌ Verification failed. Please contact support.');
            resetPayButton();
            return;
@@ -1662,7 +1691,7 @@ async function handlePayment(){
       ────────────────────────────────────────────────────────────── */
 
       /* ── Payment confirmed — unlock and download ─────────────────── */
-      console.log('[Udara] Payment verified:', response.reference);
+      console.log('[UdoDeck] Payment verified:', response.reference);
       onPaymentSuccess(response.reference);
     },
 
@@ -1781,7 +1810,7 @@ function buildAndDownloadPptx(){
         slide.addShape(pptx.ShapeType.rect,{x:0.5,y:4.0,w:1.8,h:0.05,fill:{color:T.a1}});
         if(sl.subtitle) slide.addText(sl.subtitle,{x:0.5,y:4.2,w:10,h:0.8,fontSize:14,color:T.mu,fontFace:T.font,italic:true});
         slide.addText(`01/${String(N).padStart(2,'0')}`,{x:0.5,y:6.9,w:3,h:0.3,fontSize:8,color:T.a1,fontFace:T.font});
-        slide.addText(`Udara · ${LT.label}`,{x:8,y:6.9,w:5,h:0.3,fontSize:8,color:T.mu,fontFace:T.font,align:'right'});
+        slide.addText(`UdoDeck · ${LT.label}`,{x:8,y:6.9,w:5,h:0.3,fontSize:8,color:T.mu,fontFace:T.font,align:'right'});
         break;
 
       case 'bullets':
@@ -1866,7 +1895,7 @@ function buildAndDownloadPptx(){
         (sl.bullets||[]).slice(0,4).forEach((b,k)=>{
           slide.addText(`· ${b}`,{x:2.0,y:4.85+k*0.42,w:9.3,h:0.38,fontSize:10,color:T.mu,fontFace:T.font,align:'center'});
         });
-        slide.addText(`Udara · ${LT.label} Theme`,{x:0.5,y:6.9,w:12.3,h:0.4,fontSize:9,color:T.bg,fontFace:T.font,align:'center',bold:true});
+        slide.addText(`UdoDeck · ${LT.label} Theme`,{x:0.5,y:6.9,w:12.3,h:0.4,fontSize:9,color:T.bg,fontFace:T.font,align:'center',bold:true});
         break;
 
       default:
@@ -1875,14 +1904,14 @@ function buildAndDownloadPptx(){
   });
 
   const safeName = currentTopic.replace(/[^a-z0-9\s_-]/gi,'').trim().replace(/\s+/g,'_').slice(0,50)||'presentation';
-  pptx.writeFile({fileName:`${safeName}_Udara.pptx`})
+  pptx.writeFile({fileName:`${safeName}_UdoDeck.pptx`})
     .then(()=>{
-      showToast('📥 PowerPoint downloaded! Enjoy — from Udara 🇳🇬');
+      showToast('📥 PowerPoint downloaded! Enjoy — from UdoDeck 🇳🇬');
       localStorage.removeItem(LS.slides);
       localStorage.removeItem(LS.topic);
       localStorage.removeItem(LS.audience);
     })
-    .catch(err=>{ console.error('[Udara] PPTX error:',err); showToast('❌ Download failed — please try again.'); });
+    .catch(err=>{ console.error('[UdoDeck] PPTX error:',err); showToast('❌ Download failed — please try again.'); });
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -1930,4 +1959,4 @@ function showToast(msg){
   _toast = setTimeout(() => toast.classList.remove('show'), 3500);
 }
 function delay(ms){ return new Promise(r => setTimeout(r, ms)); }
-// End of Udara app.js
+// End of UdoDeck app.js

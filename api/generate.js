@@ -1,5 +1,5 @@
 /**
- * api/generate.js — Gemini AI slide generation for Udara
+ * api/generate.js — Gemini AI slide generation for UdoDeck
  * Vercel Serverless Function
  *
  * SETUP:
@@ -269,7 +269,7 @@ Now generate the ${slideCount} slides. Begin the JSON array immediately:`;
 
   for (const model of MODELS) {
     try {
-      console.log(`[Udara] Trying model: ${model} | Topic: "${topic}" | Theme: ${layoutTheme} | Slides: ${slideCount}`);
+      console.log(`[UdoDeck] Trying model: ${model} | Topic: "${topic}" | Theme: ${layoutTheme} | Slides: ${slideCount}`);
 
       const geminiRes = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
@@ -289,7 +289,7 @@ Now generate the ${slideCount} slides. Begin the JSON array immediately:`;
 
       if (!geminiRes.ok) {
         const errBody = await geminiRes.text();
-        console.warn(`[Udara] ${model} → HTTP ${geminiRes.status}:`, errBody.slice(0, 300));
+        console.warn(`[UdoDeck] ${model} → HTTP ${geminiRes.status}:`, errBody.slice(0, 300));
         lastError = `${model}: HTTP ${geminiRes.status}`;
         continue;
       }
@@ -298,7 +298,7 @@ Now generate the ${slideCount} slides. Begin the JSON array immediately:`;
       const rawText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
 
       if (!rawText) {
-        console.warn(`[Udara] ${model} → empty response`);
+        console.warn(`[UdoDeck] ${model} → empty response`);
         lastError = `${model}: empty response`;
         continue;
       }
@@ -314,13 +314,13 @@ Now generate the ${slideCount} slides. Begin the JSON array immediately:`;
       try {
         slides = JSON.parse(cleaned);
       } catch (parseErr) {
-        console.warn(`[Udara] ${model} → JSON parse failed:`, rawText.slice(0, 300));
+        console.warn(`[UdoDeck] ${model} → JSON parse failed:`, rawText.slice(0, 300));
         lastError = `${model}: JSON parse error`;
         continue;
       }
 
       if (!Array.isArray(slides) || slides.length < 3) {
-        console.warn(`[Udara] ${model} → invalid structure`);
+        console.warn(`[UdoDeck] ${model} → invalid structure`);
         lastError = `${model}: not a slides array`;
         continue;
       }
@@ -341,16 +341,16 @@ Now generate the ${slideCount} slides. Begin the JSON array immediately:`;
         steps:       Array.isArray(slide.steps)      && slide.steps.length      ? slide.steps      : ['Step 1','Step 2','Step 3','Step 4'],
       }));
 
-      console.log(`[Udara] ✅ ${model} → ${slides.length} slides generated for "${topic}"`);
+      console.log(`[UdoDeck] ✅ ${model} → ${slides.length} slides generated for "${topic}"`);
       return res.status(200).json(slides);
 
     } catch (err) {
-      console.warn(`[Udara] ${model} threw:`, err.message);
+      console.warn(`[UdoDeck] ${model} threw:`, err.message);
       lastError = `${model}: ${err.message}`;
     }
   }
 
-  console.error('[Udara] All models failed. Last error:', lastError);
+  console.error('[UdoDeck] All models failed. Last error:', lastError);
   return res.status(502).json({
     error:     'Generation failed — all models unavailable',
     lastError: lastError,
